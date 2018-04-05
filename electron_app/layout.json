@@ -1,0 +1,29 @@
+{
+  "type": "dock",
+  "no-collpase": true,
+  "row": true,
+  "docks": [
+          {
+            "docks": [
+              {
+                "active": 0,
+                "height": 319.5,
+                "panels": [
+                  "simple.03",
+				  "simple.02",
+				  "simple.01"
+                ],
+                "type": "panel",
+                "width": 440.5
+              }
+            ],
+            "height": 319.5,
+            "row": true,
+            "type": "dock",
+            "width": 884
+          }
+        ],
+        "no-collapse": true,
+        "row": false,
+        "type": "dock"
+}

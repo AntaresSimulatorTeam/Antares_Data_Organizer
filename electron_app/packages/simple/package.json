@@ -1,0 +1,77 @@
+{
+  "name": "simple",
+  "version": "1.0.0",
+  "description": "Simple Package",
+  "main": "main.js",
+  "panel.01": {
+    "main": "catalogManager/catalogManager.js",
+    "type": "dockable",
+    "title": "Catalog manager",
+    "width": 750,
+    "height": 330,
+	"min-width": 750,
+	"min-height":330
+  },
+  "panel.02": {
+    "main": "dataBrowser/dataBrowser.js",
+    "type": "dockable",
+    "title": "Data Browser",
+    "width": 400,
+    "height": 400,
+	"min-width": 750,
+	"min-height":425
+  },
+  "panel.03": {
+    "main": "dataManager/dataManager.js",
+    "type": "dockable",
+    "title": "Data Manager",
+    "width": 1000,
+    "height": 300,
+	"min-width": 1000,
+	"min-height":250
+  },
+    "main-menu": {
+    "Panel/Catalog manager": {
+      "message": "simple:open1"
+    },
+	"Panel/Data Browser": {
+      "message": "simple:open2"
+    },
+	"Panel/Data Manager": {
+      "message": "simple:open3"
+    },
+	"Origin/Open Portfolio": {
+      "message": "simple:openMainFolder"
+    },
+	"Origin/Open Catalog": {
+      "message": "simple:openlib"
+    },
+	"Destination/Open Portfolio": {
+      "message": "simple:openFolder"
+    },
+	"Destination/Open Study Catalog": {
+      "message": "simple:openScat"
+    },
+	"Destination/Open Archive Catalog": {
+      "message": "simple:openAcat"
+    },
+	"Source/Open Source": {
+      "message": "simple:openSource"
+    },
+	"Sink/Open Sink": {
+      "message": "simple:openSink"
+    },
+	"Log/Open current log": {
+      "message": "simple:openLog"
+    },
+	"Log/Open log folder": {
+      "message": "simple:openLogFolder"
+    },
+	"?/Open reference guide": {
+      "message": "simple:openHelp"
+    },
+	"?/Open troubleshooting notes": {
+      "message": "simple:openTrouble"
+    }
+  }
+}
