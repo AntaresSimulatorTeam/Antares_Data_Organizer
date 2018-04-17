@@ -337,11 +337,11 @@ function execFolder(){
 			twoDimsArray[COPY][i]=1;
 			nbTasks++;
 		}
-		if(archiveList.childNodes[i].firstChild.checked && jsonTabFolder.TypePath[i].type=="study"){
+		if(archiveList.childNodes[i].firstChild.checked && (jsonTabFolder.TypePath[i].type=="study" || jsonTabFolder.TypePath[i].type=="folder") ){
 			twoDimsArray[ARCHIVE][i]=1;
 			nbTasks++;
 		}
-		if(expandList.childNodes[i].firstChild.checked && jsonTabFolder.TypePath[i].type=="archive"){
+		if(expandList.childNodes[i].firstChild.checked && (jsonTabFolder.TypePath[i].type=="archive" || jsonTabFolder.TypePath[i].type=="ablob")){
 			twoDimsArray[EXPAND][i]=1;
 			nbTasks++;
 		}
@@ -378,7 +378,12 @@ function internalExecAcat(indice, itabValidIndices,twoDimsArray,tabValidIndices)
 	var nbError=0;
 	if(twoDimsArray[SHOW][indice]){
 		loggerExec.verbose("\r\nShowing :" );
-		nbError+=addShowArchive(jsonTabFolder.TypePath[indice].path);
+		if(jsonTabFolder.TypePath[indice].type=="ablob"){
+			nbError+=addShowAblob(jsonTabFolder.TypePath[indice].path);
+		}
+		else{
+			nbError+=addShowArchive(jsonTabFolder.TypePath[indice].path);
+		}
 	}
 	if(twoDimsArray[REGISTER][indice]){
 		loggerExec.verbose("\r\nRegistering :" );
@@ -463,8 +468,14 @@ function internalExecScat(indice,itabValidIndices,twoDimsArray,tabValidIndices){
 	var nbError=0;
 	var unreg=false;
 	if(twoDimsArray[SHOW][indice]){
-		loggerExec.verbose("\r\nShowing :" );
-		nbError+=addShowStudy(jsonTabFolder.TypePath[indice].path);
+		if(jsonTabFolder.TypePath[indice].type=="study"){
+			loggerExec.verbose("\r\nShowing :" );
+			nbError+=addShowStudy(jsonTabFolder.TypePath[indice].path);
+		}
+		else if(jsonTabFolder.TypePath[indice].type=="folder"){
+			loggerExec.verbose("\r\nShowing :" );
+			nbError+=addShowFolder(jsonTabFolder.TypePath[indice].path);
+		}
 	}
 	if(twoDimsArray[REGISTER][indice]){
 		loggerExec.verbose("\r\nRegistering :" );
@@ -483,7 +494,7 @@ function internalExecScat(indice,itabValidIndices,twoDimsArray,tabValidIndices){
 	if(twoDimsArray[ARCHIVE][indice]){
 		loggerExec.verbose("\r\nArchiving :" );
 		var retAr;
-		if(jsonTabFolder.TypePath[indice].type=="folder"){
+		if(jsonTabFolder.TypePath[indice].type=="study"){
 			retAr=archiveStudy(jsonTabFolder.TypePath[indice].path);
 		}
 		else{
@@ -557,9 +568,17 @@ function internalExecFolder(indice,itabValidIndices,twoDimsArray,tabValidIndices
 		loggerExec.verbose("\r\nShowing :" );
 		nbError+=addShowStudy(jsonTabFolder.TypePath[indice].path);
 	}
+	if(twoDimsArray[SHOW][indice]&& jsonTabFolder.TypePath[indice].type=="folder"){
+		loggerExec.verbose("\r\nShowing :" );
+		nbError+=addShowFolder(jsonTabFolder.TypePath[indice].path);
+	}
 	if(twoDimsArray[SHOW][indice]&& jsonTabFolder.TypePath[indice].type=="archive"){
 		loggerExec.verbose("\r\nShowing :" );
 		nbError+=addShowArchive(jsonTabFolder.TypePath[indice].path);
+	}
+	if(twoDimsArray[SHOW][indice]&& jsonTabFolder.TypePath[indice].type=="ablob"){
+		loggerExec.verbose("\r\nShowing :" );
+		nbError+=addShowAblob(jsonTabFolder.TypePath[indice].path);
 	}
 	if(twoDimsArray[TRIM][indice] && jsonTabFolder.TypePath[indice].type=="study"){
 		loggerExec.verbose("\r\nTrimming :" );
@@ -603,7 +622,7 @@ function internalExecFolder(indice,itabValidIndices,twoDimsArray,tabValidIndices
 		disableDelete+=retAr;
 		nbError+=retAr;
 	}
-	if(twoDimsArray[EXPAND][indice] && jsonTabFolder.TypePath[indice].type=="archive"){
+	if(twoDimsArray[EXPAND][indice] && (jsonTabFolder.TypePath[indice].type=="archive" || jsonTabFolder.TypePath[indice].type=="ablob ")){
 		loggerExec.verbose("\r\nExpanding :" );
 		var retEx=expandStudy(jsonTabFolder.TypePath[indice].path);
 		disableDelete+=retEx;
@@ -869,10 +888,10 @@ function archiveStudy(pathStudy){
 	}
 	try{
 		if(destFolder && document.getElementById('simple.03').shadowRoot.getElementById('destFolderCheck').checked){
-			var meta= "[destinat]"+ destFolder + "\n[ADOversn]100";
+			var meta= "[destinat]"+ destFolder + "\n[ADOversn]110";
 		}
 		else{
-			var meta= "[destinat]"+ path.parse(pathStudy).dir + "\n[ADOversn]100";
+			var meta= "[destinat]"+ path.parse(pathStudy).dir + "\n[ADOversn]110";
 		}
 		var pathInput=path.join(pathStudy,"input");
 		var pathOutput=path.join(pathStudy,"output");
@@ -998,7 +1017,7 @@ function archiveStudy(pathStudy){
 	}
 }
 
-//Archives a study on destfolder or on site
+//Archives a folder on destfolder or on site
 function archiveFolder(pathStudy){
 	var hash=utils.getHashStudy(pathStudy,loggerExec);
 	if(hash=="error"){
@@ -1152,16 +1171,23 @@ function expandStudy(pathStudy){
 					nberr+=registerInLib(pathDestFolder, destScat);
 					nbShadowTasks++;
 				}
-				if(checkHashDest(pathStudy,pathDestFolder)=="OK"){
-					nbTasksOk++;
-					loggerExec.info(pathStudy + " has been expanded into " + destFolder);
-					return nberr;
+				if(readAdoVersion(pathStudy)>100){
+					if(checkHashDest(pathStudy,pathDestFolder)=="OK"){
+						nbTasksOk++;
+						loggerExec.info(pathStudy + " has been expanded into " + destFolder);
+						return nberr;
+					}
+					else{
+						loggerExec.debug("checkHashDest failed inside expandStudy");
+						loggerExec.error(pathStudy + " has not been expanded properly");
+						nbErrorMain++;
+						return 1;
+					}
 				}
 				else{
-					loggerExec.debug("checkHashDest failed inside expandStudy");
-					loggerExec.error(pathStudy + " has not been expanded properly");
-					nbErrorMain++;
-					return 1;
+					nbTasksOk++;
+					loggerExec.info(pathStudy + " has been expanded into " + destFolder + " ; the hash has not been checked because this archive was created by an incompatible version.");
+					return nberr;
 				}
 			}
 			catch(err){
@@ -1188,14 +1214,21 @@ function expandStudy(pathStudy){
 					registerInLib(pathDestFolder, destScat);
 					nbShadowTasks++;
 				}
-				if(checkHashDest(pathStudy,pathDestFolder)=="OK"){
-					nbTasksOk++;
-					loggerExec.info(pathStudy + " has been expanded into " + path.dirname(pathStudy));
-					return 0;
+				if(readAdoVersion(pathStudy)>100){
+					if(checkHashDest(pathStudy,pathDestFolder)=="OK"){
+						nbTasksOk++;
+						loggerExec.info(pathStudy + " has been expanded into " + path.dirname(pathStudy));
+						return 0;
+					}
+					else{
+						loggerExec.error(pathStudy + " has not been expanded properly");
+						nbErrorMain++;
+					}
 				}
 				else{
-					loggerExec.error(pathStudy + " has not been expanded properly");
-					nbErrorMain++;
+					nbTasksOk++;
+					loggerExec.info(pathStudy + " has been expanded into " + path.dirname(pathStudy) + " ; the hash has not been checked because this archive was created by an incompatible version.");
+					return nberr;
 				}
 			}
 			catch(err){
@@ -1205,6 +1238,20 @@ function expandStudy(pathStudy){
 				return 1;
 			}
 		}
+	}
+}
+
+//returns the version of the data organizer that the archive was created with
+function readAdoVersion(pathArchive){
+	var cmd ='"'+os.getSevenZip(appPath, loggerExec)+'" e "'+pathArchive +'" "*.meta" -r -so -p' + password;
+	try{
+		var stringFile=execSync(cmd);
+		var line = stringFile.toString().match(".*ADOversn.*" );
+		var version=line[0].match("[0-9]{1,}")[0];
+		return version;
+	}
+	catch(err){
+		return "error";
 	}
 }
 
@@ -1257,6 +1304,55 @@ function deleteStudy(pathStudy){
 			nbErrorMain++;
 			return 1;
 		}
+	}
+}
+
+//adds a folder to the showfile
+function addShowFolder(pathFolder){
+	if(showFile!=""){
+		try{
+			var metrics="[I-Identi]\r\n[itemType]Folder\r\n[ExtrName]"+  path.parse(pathFolder).base
+			+ "\r\n[Location]"+ path.parse(pathFolder).dir
+			+ "\r\n[StdyHash]"+ utils.getHashStudy(pathFolder,loggerExec)
+			+ "\r\n[LastSave]"+ utils.toJSONLocal(fs.statSync(pathFolder).mtime);
+			metrics+="\r\n[II-Mtrcs]";
+			if(fs.existsSync(pathFolder) && fs.statSync(pathFolder).isDirectory()){
+						metrics+="\r\n[TotlSize]"+getFolderSizeSync(pathFolder);
+						metrics+="\r\n[TotFiles]"+fs.listTreeSync(pathFolder).length;
+			}
+			var commentsPath=path.join(pathFolder,"info.ado");
+			if(fs.existsSync(commentsPath)){
+				metrics+="\r\n[usrsNote]";
+				var lines=fs.readFileSync(commentsPath, 'utf8').split(/[\r\n]+/);
+				for(var i=0;i<lines.length;i++){
+					metrics+="\r\n[textLine]"+lines[i];
+				}
+			}
+			metrics+="\r\n\r\n";
+			if(!fs.existsSync(showFile)){
+				if(path.parse(pathMain).ext==".scat"){
+					fs.appendFileSync(showFile, "[OrigSCat]"+ pathMain +"\r\n\r\n");
+				}
+				else{
+					fs.appendFileSync(showFile, "[OrigPort]"+ pathMain +"\r\n\r\n");
+				}
+			}
+			fs.appendFileSync(showFile, metrics);
+			nbTasksOk++;
+			loggerExec.info(pathFolder + " succesfully shown to " + showFile);
+			return 0;
+		}
+		catch(err){
+			loggerExec.debug("Error : " +err + " inside addShowFolder");
+			loggerExec.error(pathFolder + ' "show" function in error. ');
+			nbErrorMain++;
+			return 1;
+		}
+	}
+	else{
+		loggerExec.error(pathFolder + ' "show" function in error. ');
+		nbErrorMain++;
+		return 1;
 	}
 }
 
@@ -1365,6 +1461,55 @@ function addShowArchive(pathArchive){
 			metrics+="\r\n[PackFile]1";
 			metrics+="\r\n[usrsNote]";
 			metrics+=getLinesFromAntar(pathArchive);
+			metrics+="\r\n\r\n";
+			if(!fs.existsSync(showFile)){
+				if(path.parse(pathMain).ext==".acat"){
+					fs.appendFileSync(showFile, "[OrigAcat]"+ pathMain +"\r\n\r\n");
+				}
+				else{
+					fs.appendFileSync(showFile, "[OrigPort]"+ pathMain +"\r\n\r\n");
+				}
+			}
+			fs.appendFileSync(showFile, metrics);
+			nbTasksOk++;
+			loggerExec.info(pathArchive + " succesfully shown to " + showFile);
+			return 0;
+		}
+		catch(err){
+			loggerExec.error(err + ' "show" function in error. ');
+			nbErrorMain++;
+			return 1;
+		}
+	}
+	else{
+		loggerExec.error(pathStudy + ' "show" function in error. ');
+		nbErrorMain++;
+		return 1;
+	}
+}
+
+//adds a show archive to the showfile
+function addShowAblob(pathArchive){
+	if(showFile!=""){
+		try{
+			var metrics="[I-Identi]\r\n[itemType]Archive\r\n[ArchName]"+ path.parse(pathArchive).base
+			+ "\r\n[OrigSCat]"+ utils.getMetaFromAntar(pathArchive,"OrigSCat",password,loggerActions,loggerExec)
+			+ "\r\n[OrigSLoc]"+ utils.getMetaFromAntar(pathArchive,"OrigSLoc",password,loggerActions,loggerExec)
+			+ "\r\n[ExtrName]"+ utils.getMetaFromAntar(pathArchive,"ExtrName",password,loggerActions,loggerExec)
+			+ "\r\n[Location]"+ path.parse(pathArchive).dir
+			+ "\r\n[StdyHash]"+ utils.getHashFromAntar(pathArchive,password,loggerActions,loggerExec)
+			+ "\r\n[ArchHash]"+ utils.getHashStudy(pathArchive,loggerExec)
+			+ "\r\n[LastSave]"+ utils.toJSONLocal(fs.statSync(pathArchive).mtime);	
+			metrics+="\r\n[II-Mtrcs]";
+			metrics+="\r\n[UnPackSz]"+ utils.getMetaFromAntar(pathArchive,"TotlSize",password,loggerActions,loggerExec);
+			metrics+="\r\n[UnPackFl]"+ utils.getMetaFromAntar(pathArchive,"TotlFile",password,loggerActions,loggerExec);
+			metrics+="\r\n[PackSize]"+ fs.getSizeSync(pathArchive);
+			metrics+="\r\n[PackFile]1";
+			metrics+="\r\n[usrsNote]";
+			var lines=utils.getLinesFromAblob(pathArchive,loggerExec,password).toString().split(/[\r\n]+/);
+			for(var i=0;i<lines.length;i++){
+				metrics+="\r\n[textLine]"+lines[i];
+			}
 			metrics+="\r\n\r\n";
 			if(!fs.existsSync(showFile)){
 				if(path.parse(pathMain).ext==".acat"){
@@ -1620,7 +1765,7 @@ function recursiveSearch(pathFolder, level ){
 		if(isdir){
 			try{
 				var studyPath=isAntaresStudy(subPath);
-				var folderPath=isAdoFolder(subPath);
+				var folderPath=utils.isAdoFolder(subPath);
 				if( studyPath){
 					var tabTag=utils.readTag(studyPath,loggerActions);
 					if(tabTag.length<3){
@@ -1776,7 +1921,7 @@ function refreshBoxes(){
 	}
 	if(typePath=="dir"){
 		for(var i=0; i<jsonTabFolder.TypePath.length; i++){
-			addCheckArray(arrayCheck,[(jsonTabFolder.TypePath[i].type!="folder" && jsonTabFolder.TypePath[i].type!="ablob"),//show
+			addCheckArray(arrayCheck,[1,//show
 				((jsonTabFolder.TypePath[i].type=="archive" || jsonTabFolder.TypePath[i].type=="ablob") && document.getElementById('simple.03').shadowRoot.getElementById('destAcatCheck').checked)||((jsonTabFolder.TypePath[i].type=="study" || jsonTabFolder.TypePath[i].type=="folder") && document.getElementById('simple.03').shadowRoot.getElementById('destScatCheck').checked),//register
 				0,//unregister
 				jsonTabFolder.TypePath[i].type=="study",//trim
@@ -1789,7 +1934,7 @@ function refreshBoxes(){
 	if(typePath=="scat"){
 		for(var i=0; i<jsonTabFolder.TypePath.length; i++){
 			if(fs.existsSync(jsonTabFolder.TypePath[i].path)){
-				addCheckArray(arrayCheck,[jsonTabFolder.TypePath[i].type=="study",document.getElementById('simple.03').shadowRoot.getElementById('destScatCheck').checked,1,jsonTabFolder.TypePath[i].type=="study",document.getElementById('simple.03').shadowRoot.getElementById('destFolderCheck').checked/*copy*/,1,0,1]);
+				addCheckArray(arrayCheck,[1,document.getElementById('simple.03').shadowRoot.getElementById('destScatCheck').checked,1,jsonTabFolder.TypePath[i].type=="study",document.getElementById('simple.03').shadowRoot.getElementById('destFolderCheck').checked/*copy*/,1,0,1]);
 			}
 			else{
 				addCheckArray(arrayCheck,[0,0,1,0,0,0,0,0]);
@@ -1799,7 +1944,7 @@ function refreshBoxes(){
 	if(typePath=="acat"){
 		for(var i=0; i<jsonTabFolder.TypePath.length; i++){
 			if(fs.existsSync(jsonTabFolder.TypePath[i].path)){
-				addCheckArray(arrayCheck,[jsonTabFolder.TypePath[i].type=="archive",document.getElementById('simple.03').shadowRoot.getElementById('destAcatCheck').checked,1,0,document.getElementById('simple.03').shadowRoot.getElementById('destFolderCheck').checked/*copy*/,0,1,1]);
+				addCheckArray(arrayCheck,[1,document.getElementById('simple.03').shadowRoot.getElementById('destAcatCheck').checked,1,0,document.getElementById('simple.03').shadowRoot.getElementById('destFolderCheck').checked/*copy*/,0,1,1]);
 			}
 			else{
 				addCheckArray(arrayCheck,[0,0,1,0,0,0,0,0]);
@@ -1943,7 +2088,7 @@ function afficherScat(){
 									"tag3": tabTag[2]
 					});
 				}
-				else if(isAdoFolder(JsonLib.libArray[i])){
+				else if(utils.isAdoFolder(JsonLib.libArray[i])){
 					jsonTabFolder.TypePath.push({	"type": "folder",
 									"name": JsonLib.libArray[i].match(/([^\\|\/]*)\/*$/)[1],
 									"path": JsonLib.libArray[i],
@@ -2223,23 +2368,6 @@ function isAntaresStudy(pathFolder){
 							result=pathFolder;
 						}
 				}
-			}
-		}
-	}
-	catch(err) {//do nothing
-	}
-	return result;
-}
-
-//Look at a path and determine if it is a compatible folder or not
-function isAdoFolder(pathFolder){
-	var result=0;
-	var newpath;
-	try{
-		if(fs.isDirectorySync(pathFolder)){
-			var items=fs.readdirSync(pathFolder);
-			if(fs.existsSync(path.join(pathFolder,"info.ado"))){ 
-				result=pathFolder;
 			}
 		}
 	}

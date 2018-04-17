@@ -19,6 +19,24 @@ if(process.platform=="linux"){
 var exports = module.exports = {};
 var _this = this;
 
+//Look at a path and determine if it is a compatible folder or not
+exports.isAdoFolder = function(pathFolder){
+	var result=0;
+	var newpath;
+	try{
+		if(fs.isDirectorySync(pathFolder)){
+			var items=fs.readdirSync(pathFolder);
+			if(fs.existsSync(path.join(pathFolder,"info.ado"))){ 
+				result=pathFolder;
+			}
+		}
+	}
+	catch(err) {//do nothing
+	}
+	return result;
+}
+
+
 //get hash from folder
 exports.getHashStudy = function(studyPath,logger){
 	try{
@@ -289,6 +307,17 @@ exports.tickUntickAll = function(list){
 		if ( !list.childNodes[i].childNodes[0].disabled){
 			list.childNodes[i].childNodes[0].checked=!allchecked;
 		}
+	}
+}
+
+exports.getLinesFromAblob = function(pathArchive,logger,password){
+	var cmd ='"'+os.getSevenZip(appPath, logger)+'" e "'+pathArchive +'" "*'+ path.join(exports.getExtNameFromAntar(pathArchive,password,logger,0),"info.ado")+'" -r -so -p' + password;
+	try{
+		var stringFile=execSync(cmd);
+		return stringFile;
+	}
+	catch(err){
+		return "Error";
 	}
 }
 

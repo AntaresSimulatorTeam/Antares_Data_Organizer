@@ -77,6 +77,9 @@ function getMetricsFromAntar(pathArchive){
 	}
 	try{
 		var line = stringFile.match("\\[OrigSLoc\\].*" );
+		if(!line){
+			line = stringFile.match("\\[OrigFLoc\\].*" );
+		}
 		var res=line[0].split("]")[1];
 		if(res){
 			document.getElementById('simple.02').shadowRoot.getElementById('OrigSLoc').innerHTML=res;
@@ -175,13 +178,57 @@ function getHtmlFromAntar(){
 //get the global variables and use them to refresh the page
 function display(){
 	document.getElementById('simple.02').shadowRoot.getElementById('location').innerHTML="-";
+	document.getElementById('simple.02').shadowRoot.getElementById('IntName').innerHTML="-";
+	document.getElementById('simple.02').shadowRoot.getElementById('totalSize').innerHTML="-";
+	document.getElementById('simple.02').shadowRoot.getElementById('inputSize').innerHTML="-";
+	document.getElementById('simple.02').shadowRoot.getElementById('outputSize').innerHTML="-";
+	document.getElementById('simple.02').shadowRoot.getElementById('userSize').innerHTML="-";
+	document.getElementById('simple.02').shadowRoot.getElementById('inputFiles').innerHTML="-";
+	document.getElementById('simple.02').shadowRoot.getElementById('outputFiles').innerHTML="-";
+	document.getElementById('simple.02').shadowRoot.getElementById('totalFiles').innerHTML="-";
+	document.getElementById('simple.02').shadowRoot.getElementById('userFiles').innerHTML="-";
+	document.getElementById('simple.02').shadowRoot.getElementById('saved').innerHTML="-";
+	document.getElementById('simple.02').shadowRoot.getElementById('version').innerHTML="-";
+	document.getElementById('simple.02').shadowRoot.getElementById('notes').innerHTML="-";
+	document.getElementById('simple.02').shadowRoot.getElementById('compressedSize').innerHTML="-";
+	document.getElementById('simple.02').shadowRoot.getElementById('compressedFiles').innerHTML="-";
+	document.getElementById('simple.02').shadowRoot.getElementById('uncompressedSize').innerHTML="-";
+	document.getElementById('simple.02').shadowRoot.getElementById('uncompressedFiles').innerHTML="-";
+	document.getElementById('simple.02').shadowRoot.getElementById('StdHash').innerHTML="-";
+	document.getElementById('simple.02').shadowRoot.getElementById('ExtName').innerHTML="-";
+	document.getElementById('simple.02').shadowRoot.getElementById('OrigSLoc').innerHTML="-";
+	document.getElementById('simple.02').shadowRoot.getElementById('OrigSCat').innerHTML="-";
+	document.getElementById('simple.02').shadowRoot.getElementById('compressedFiles').innerHTML="-";
 	for(var i =0;i<10;i++){
 		document.getElementById('simple.02').shadowRoot.getElementById('tag_'+("0" + (i+1)).slice(-2)).style.display="none";
 	}
-	if(path.extname(pathMain)===".antar"){
-		document.getElementById('simple.02').shadowRoot.getElementById('notes').style.top="440px";
+	if(path.extname(pathMain)===".ablob"){
+		document.getElementById('simple.02').shadowRoot.getElementById('notes').style.top="310px";
 		document.getElementById('simple.02').shadowRoot.getElementById('ArchName').innerHTML=path.parse(pathMain).base;
-		document.getElementById('simple.02').shadowRoot.getElementById('IntName').innerHTML="-";
+		var studyMetrics=document.getElementById('simple.02').shadowRoot.querySelectorAll('.studyMetrics');
+		for(var i=0;i<studyMetrics.length;i++){
+			studyMetrics[i].style.display="none";
+		}
+		var archiveMetrics=document.getElementById('simple.02').shadowRoot.querySelectorAll('.archiveMetrics');
+		for(var i=0;i<archiveMetrics.length;i++){
+			archiveMetrics[i].style.display="none";
+		}
+		var studyOrArchive=document.getElementById('simple.02').shadowRoot.querySelectorAll('.studyOrArchive');
+		for(var i=0;i<studyOrArchive.length;i++){
+			studyOrArchive[i].style.display="none";
+		}
+		var archiveOrAblob=document.getElementById('simple.02').shadowRoot.querySelectorAll('.archiveOrAblob');
+		for(var i=0;i<archiveOrAblob.length;i++){
+			archiveOrAblob[i].style.display="";
+		}
+		var studyOrFolder=document.getElementById('simple.02').shadowRoot.querySelectorAll('.studyOrFolder');
+		for(var i=0;i<studyOrFolder.length;i++){
+			studyOrFolder[i].style.display="none";
+		}
+	}
+	else if(path.extname(pathMain)===".antar"){
+		document.getElementById('simple.02').shadowRoot.getElementById('notes').style.top="410px";
+		document.getElementById('simple.02').shadowRoot.getElementById('ArchName').innerHTML=path.parse(pathMain).base;
 		var studyMetrics=document.getElementById('simple.02').shadowRoot.querySelectorAll('.studyMetrics');
 		for(var i=0;i<studyMetrics.length;i++){
 			studyMetrics[i].style.display="none";
@@ -191,48 +238,71 @@ function display(){
 		for(var i=0;i<archiveMetrics.length;i++){
 			archiveMetrics[i].style.display="";
 		}
-		document.getElementById('simple.02').shadowRoot.getElementById('saved').innerHTML="-";
-		document.getElementById('simple.02').shadowRoot.getElementById('compressedSize').innerHTML="-";
-		document.getElementById('simple.02').shadowRoot.getElementById('compressedFiles').innerHTML="-";
-		document.getElementById('simple.02').shadowRoot.getElementById('uncompressedSize').innerHTML="-";
-		document.getElementById('simple.02').shadowRoot.getElementById('uncompressedFiles').innerHTML="-";
-		document.getElementById('simple.02').shadowRoot.getElementById('StdHash').innerHTML="-";
-		document.getElementById('simple.02').shadowRoot.getElementById('ExtName').innerHTML="-";
-		document.getElementById('simple.02').shadowRoot.getElementById('OrigSLoc').innerHTML="-";
-		document.getElementById('simple.02').shadowRoot.getElementById('OrigSCat').innerHTML="-";
-		document.getElementById('simple.02').shadowRoot.getElementById('notes').innerHTML="-";
-		document.getElementById('simple.02').shadowRoot.getElementById('version').innerHTML="-";
+		
+		var studyOrArchive=document.getElementById('simple.02').shadowRoot.querySelectorAll('.studyOrArchive');
+		for(var i=0;i<studyOrArchive.length;i++){
+			studyOrArchive[i].style.display="";
+		}
+		var archiveOrAblob=document.getElementById('simple.02').shadowRoot.querySelectorAll('.archiveOrAblob');
+		for(var i=0;i<archiveOrAblob.length;i++){
+			archiveOrAblob[i].style.display="";
+		}
+		var studyOrFolder=document.getElementById('simple.02').shadowRoot.querySelectorAll('.studyOrFolder');
+		for(var i=0;i<studyOrFolder.length;i++){
+			studyOrFolder[i].style.display="none";
+		}
 	}
-	else{
-		document.getElementById('simple.02').shadowRoot.getElementById('notes').style.top="380px";
+	else if(utils.isAdoFolder(pathMain)){
+		document.getElementById('simple.02').shadowRoot.getElementById('notes').style.top="215px";
 		document.getElementById('simple.02').shadowRoot.getElementById('ExtName').innerHTML=path.parse(pathMain).base;
-		document.getElementById('simple.02').shadowRoot.getElementById('IntName').innerHTML="-";
+		
+		var studyMetrics=document.getElementById('simple.02').shadowRoot.querySelectorAll('.studyMetrics');
+		for(var i=0;i<studyMetrics.length;i++){
+			studyMetrics[i].style.display="none";
+		}
+		var archiveMetrics=document.getElementById('simple.02').shadowRoot.querySelectorAll('.archiveMetrics');
+		for(var i=0;i<archiveMetrics.length;i++){
+			archiveMetrics[i].style.display="none";
+		}
+		var studyOrArchive=document.getElementById('simple.02').shadowRoot.querySelectorAll('.studyOrArchive');
+		for(var i=0;i<studyOrArchive.length;i++){
+			studyOrArchive[i].style.display="none";
+		}
+		var archiveOrAblob=document.getElementById('simple.02').shadowRoot.querySelectorAll('.archiveOrAblob');
+		for(var i=0;i<archiveOrAblob.length;i++){
+			archiveOrAblob[i].style.display="none";
+		}
+		var studyOrFolder=document.getElementById('simple.02').shadowRoot.querySelectorAll('.studyOrFolder');
+		for(var i=0;i<studyOrFolder.length;i++){
+			studyOrFolder[i].style.display="";
+		}
+	}
+	else{//study
+		document.getElementById('simple.02').shadowRoot.getElementById('notes').style.top="390px";
+		document.getElementById('simple.02').shadowRoot.getElementById('ExtName').innerHTML=path.parse(pathMain).base;
 		
 		var studyMetrics=document.getElementById('simple.02').shadowRoot.querySelectorAll('.studyMetrics');
 		for(var i=0;i<studyMetrics.length;i++){
 			studyMetrics[i].style.display="";
 		}
-		
 		var archiveMetrics=document.getElementById('simple.02').shadowRoot.querySelectorAll('.archiveMetrics');
 		for(var i=0;i<archiveMetrics.length;i++){
 			archiveMetrics[i].style.display="none";
 		}
-		
-		document.getElementById('simple.02').shadowRoot.getElementById('totalSize').innerHTML="-";
-		document.getElementById('simple.02').shadowRoot.getElementById('inputSize').innerHTML="-";
-		document.getElementById('simple.02').shadowRoot.getElementById('outputSize').innerHTML="-";
-		document.getElementById('simple.02').shadowRoot.getElementById('userSize').innerHTML="-";
-		document.getElementById('simple.02').shadowRoot.getElementById('inputFiles').innerHTML="-";
-		document.getElementById('simple.02').shadowRoot.getElementById('outputFiles').innerHTML="-";
-		document.getElementById('simple.02').shadowRoot.getElementById('totalFiles').innerHTML="-";
-		document.getElementById('simple.02').shadowRoot.getElementById('userFiles').innerHTML="-";
-		document.getElementById('simple.02').shadowRoot.getElementById('totalSize').innerHTML="-";
-		document.getElementById('simple.02').shadowRoot.getElementById('saved').innerHTML="-";
-		document.getElementById('simple.02').shadowRoot.getElementById('version').innerHTML="-";
-		document.getElementById('simple.02').shadowRoot.getElementById('totalFiles').innerHTML="-";
-		document.getElementById('simple.02').shadowRoot.getElementById('notes').innerHTML="-";
-	
+		var studyOrArchive=document.getElementById('simple.02').shadowRoot.querySelectorAll('.studyOrArchive');
+		for(var i=0;i<studyOrArchive.length;i++){
+			studyOrArchive[i].style.display="";
+		}
+		var archiveOrAblob=document.getElementById('simple.02').shadowRoot.querySelectorAll('.archiveOrAblob');
+		for(var i=0;i<archiveOrAblob.length;i++){
+			archiveOrAblob[i].style.display="none";
+		}
+		var studyOrFolder=document.getElementById('simple.02').shadowRoot.querySelectorAll('.studyOrFolder');
+		for(var i=0;i<studyOrFolder.length;i++){
+			studyOrFolder[i].style.display="";
+		}
 	}
+	
 	setTimeout(function () {displayAll()},100);//letting time to refresh
 }
 
@@ -271,7 +341,31 @@ function displayAll(){
 	if(copyCmd){
 		document.getElementById('simple.02').shadowRoot.getElementById('location').onclick=child_process.spawn(copyCmd).stdin.end(path.parse(pathMain).dir);
 	}
-	if(path.extname(pathMain)===".antar"){
+	if(path.extname(pathMain)===".ablob"){
+		document.getElementById('simple.02').shadowRoot.getElementById('ArchName').innerHTML=path.parse(pathMain).base;
+		if(copyCmd){
+			document.getElementById('simple.02').shadowRoot.getElementById('ArchName').onclick=child_process.spawn(copyCmd).stdin.end(path.parse(pathMain).base);
+		}
+		var getName=getNameFromAntar();
+		if(copyCmd){
+			document.getElementById('simple.02').shadowRoot.getElementById('IntName').onclick=child_process.spawn(copyCmd).stdin.end(getName);
+		}
+		document.getElementById('simple.02').shadowRoot.getElementById('saved').innerHTML=utils.toJSONLocal(fs.statSync(pathMain).mtime);
+		var closeCross = document.getElementById('simple.02').shadowRoot.getElementById("TagList").getElementsByClassName("blackCross");
+		document.getElementById('simple.02').shadowRoot.getElementById('compressedSize').innerHTML=common.formatBytes(fs.getSizeSync(pathMain),3);
+		document.getElementById('simple.02').shadowRoot.getElementById('compressedFiles').innerHTML="1";
+		document.getElementById('simple.02').shadowRoot.getElementById('uncompressedSize').innerHTML=common.formatBytes(utils.getMetaFromAntar(pathMain,'TotlSize',password,loggerActions,0),3);
+		document.getElementById('simple.02').shadowRoot.getElementById('uncompressedFiles').innerHTML=utils.getMetaFromAntar(pathMain,'TotlFile',password,loggerActions,0);
+		//getArchiveProperties(pathMain);
+		getMetricsFromAntar(pathMain);
+		document.getElementById('simple.02').shadowRoot.getElementById('notes').innerHTML="-";
+		var htmlFromAntar=getHtmlFromAntar();
+		document.getElementById('simple.02').shadowRoot.getElementById('notes').innerHTML=utils.getLinesFromAblob(pathMain,loggerActions,password);
+		if(copyCmd){
+			document.getElementById('simple.02').shadowRoot.getElementById('notes').onclick=child_process.spawn(copyCmd).stdin.end(utils.getLinesFromAblob(pathMain,loggerActions,password));
+		}
+	}
+	else if(path.extname(pathMain)===".antar"){
 		document.getElementById('simple.02').shadowRoot.getElementById('ArchName').innerHTML=path.parse(pathMain).base;
 		if(copyCmd){
 			document.getElementById('simple.02').shadowRoot.getElementById('ArchName').onclick=child_process.spawn(copyCmd).stdin.end(path.parse(pathMain).base);
@@ -299,7 +393,6 @@ function displayAll(){
 		document.getElementById('simple.02').shadowRoot.getElementById('StdHash').innerHTML=utils.getHashFromAntar(pathMain,password,loggerActions,0);
 		//getArchiveProperties(pathMain);
 		getMetricsFromAntar(pathMain);
-		document.getElementById('simple.02').shadowRoot.getElementById('notes').innerHTML="-";
 		var htmlFromAntar=getHtmlFromAntar();
 		document.getElementById('simple.02').shadowRoot.getElementById('notes').innerHTML=htmlFromAntar;
 		if(copyCmd){
@@ -307,8 +400,18 @@ function displayAll(){
 		}
 		document.getElementById('simple.02').shadowRoot.getElementById('version').innerHTML=utils.readVersionAntar(pathMain,password,loggerActions,0);
 	}
+	else if(utils.isAdoFolder(pathMain)){
+		document.getElementById('simple.02').shadowRoot.getElementById('ExtName').innerHTML=path.parse(pathMain).base;
+
+		document.getElementById('simple.02').shadowRoot.getElementById('totalSize').innerHTML=getFolderSizeSync(pathMain);
+		document.getElementById('simple.02').shadowRoot.getElementById('saved').innerHTML=utils.toJSONLocal(fs.statSync(pathMain).mtime);
+		document.getElementById('simple.02').shadowRoot.getElementById('totalFiles').innerHTML=fs.listTreeSync(pathMain).length;
+		var info=path.join(pathMain,"info.ado");
+		if(fs.existsSync(info)){
+			document.getElementById('simple.02').shadowRoot.getElementById('notes').innerHTML=fs.readFileSync(info, 'utf8');
+		}
+	}
 	else{
-		document.getElementById('simple.02').shadowRoot.getElementById('notes').style.top="390px";
 		document.getElementById('simple.02').shadowRoot.getElementById('ExtName').innerHTML=path.parse(pathMain).base;
 		if(copyCmd){
 			document.getElementById('simple.02').shadowRoot.getElementById('ExtName').onclick=child_process.spawn(copyCmd).stdin.end(path.parse(pathMain).base);
@@ -320,15 +423,6 @@ function displayAll(){
 		}
 
 		if(fs.existsSync(pathMain) && fs.statSync(pathMain).isDirectory()){
-			
-			document.getElementById('simple.02').shadowRoot.getElementById('totalSize').innerHTML="-";
-			document.getElementById('simple.02').shadowRoot.getElementById('inputSize').innerHTML="-";
-			document.getElementById('simple.02').shadowRoot.getElementById('outputSize').innerHTML="-";
-			document.getElementById('simple.02').shadowRoot.getElementById('userSize').innerHTML="-";
-			document.getElementById('simple.02').shadowRoot.getElementById('inputFiles').innerHTML="-";
-			document.getElementById('simple.02').shadowRoot.getElementById('outputFiles').innerHTML="-";
-			document.getElementById('simple.02').shadowRoot.getElementById('totalFiles').innerHTML="-";
-			document.getElementById('simple.02').shadowRoot.getElementById('userFiles').innerHTML="-";
 			document.getElementById('simple.02').shadowRoot.getElementById('totalSize').innerHTML=getFolderSizeSync(pathMain);
 			document.getElementById('simple.02').shadowRoot.getElementById('saved').innerHTML=readModifDate(pathMain);
 			var tags=utils.readTag(pathMain,loggerActions);
@@ -343,7 +437,6 @@ function displayAll(){
 			}
 			document.getElementById('simple.02').shadowRoot.getElementById('version').innerHTML=utils.readVersion(pathMain);
 			document.getElementById('simple.02').shadowRoot.getElementById('totalFiles').innerHTML=fs.listTreeSync(pathMain).length;
-			document.getElementById('simple.02').shadowRoot.getElementById('notes').innerHTML="-";
 			var pathInput=path.join(pathMain,"input");
 			var pathOutput=path.join(pathMain,"output");
 			var pathUser=path.join(pathMain,"user");
@@ -511,6 +604,7 @@ Editor.Panel.extend({
 		margin-right:5px;
 		bottom:5px;
 		padding-left: 5px;
+		white-space: pre-wrap;
 	}
 	#tagCont{
 		height:18px;
@@ -583,16 +677,16 @@ Editor.Panel.extend({
     <div id="identification">
 		<table>
 			<tr> <th colspan="2" style="text-align:left;"> I - Identification </th> </tr>
-			<tr class="archiveMetrics" style="display:none;"> <td class="leftColumn"> Archive file name : </td> <td id="ArchName"> - </td></tr>
-			<tr class="archiveMetrics" style="display:none;"> <td class="leftColumn"> Orginal study location : </td> <td id="OrigSLoc"> - </td> </tr>
-			<tr class="archiveMetrics" style="display:none;"> <td class="leftColumn"> Original study catalog : </td> <td id="OrigSCat"> - </td> </tr>
-			<tr> <td class="leftColumn"> Study External Name : </td> <td id="ExtName"> - </td> </tr>
-			<tr> <td class="leftColumn"> Study Internal Name : </td> <td id="IntName"> - </td> </tr>
+			<tr class="archiveOrAblob" style="display:none;"> <td class="leftColumn"> Archive file name : </td> <td id="ArchName"> - </td></tr>
+			<tr class="archiveOrAblob" style="display:none;"> <td class="leftColumn"> Orginal location : </td> <td id="OrigSLoc"> - </td> </tr>
+			<tr class="archiveOrAblob" style="display:none;"> <td class="leftColumn"> Original study catalog : </td> <td id="OrigSCat"> - </td> </tr>
+			<tr> <td class="leftColumn"> External Name : </td> <td id="ExtName"> - </td> </tr>
+			<tr class="studyOrArchive"> <td class="leftColumn"> Internal Name : </td> <td id="IntName"> - </td> </tr>
 			<tr> <td class="leftColumn"> Location : </td> <td id="location"> - </td></tr>
 			<tr class="archiveMetrics" style="display:none;"> <td class="leftColumn"> Original study hash : </td> <td id="StdHash"> - </td> </tr>
-			<tr> <td class="leftColumn"> Version : </td> <td id="version"> - </td></tr>
+			<tr class="studyOrArchive"> <td class="leftColumn"> Version : </td> <td id="version"> - </td></tr>
 			<tr> <td class="leftColumn"> Last Saved : </td> <td id="saved"> - </td></tr>
-			<tr> <td class="leftColumn"> Tags : </td> 
+			<tr class="studyOrArchive"> <td class="leftColumn"> Tags : </td> 
 			<td><ul id=TagList>
 			<li style="display:none;" id="tag_01"> <span id="tag_01_txt"> - </span> <span class="blackCross" onClick="Editor.Ipc.sendToPanel('simple.02','del_01')">×</span></li>
 			<li style="display:none;" id="tag_02"> <span id="tag_02_txt"> - </span> <span class="blackCross" onClick="Editor.Ipc.sendToPanel('simple.02','del_02')">×</span></li>
@@ -605,7 +699,7 @@ Editor.Panel.extend({
 			<li style="display:none;" id="tag_09"> <span id="tag_09_txt"> - </span> <span class="blackCross" onClick="Editor.Ipc.sendToPanel('simple.02','del_09')">×</span></li>
 			<li style="display:none;" id="tag_10"> <span id="tag_10_txt"> - </span> <span class="blackCross" onClick="Editor.Ipc.sendToPanel('simple.02','del_10')">×</span></li>
 			</ul></td>
-			<tr><td class="leftColumn">Add tag :</td><td class="leftColumn"> <SELECT id="selectTag"></SELECT>  <span id="buttonAdd" onClick="Editor.Ipc.sendToPanel('simple.02','addTag')">Add</span> </td></tr>
+			<tr class="studyMetrics"><td class="leftColumn">Add tag :</td><td class="leftColumn"> <SELECT id="selectTag"></SELECT>  <span id="buttonAdd" onClick="Editor.Ipc.sendToPanel('simple.02','addTag')">Add</span> </td></tr>
 		</tr>
 		</table><\div>
 	<div id="metrics">
@@ -614,9 +708,9 @@ Editor.Panel.extend({
 			<tr class="studyMetrics"> <td class="leftColumn"> Input : </td> <td id="inputSize"> - </td> <td id="inputFiles"> - </td></tr>
 			<tr class="studyMetrics"> <td class="leftColumn"> Output : </td> <td id="outputSize"> - </td> <td id="outputFiles"> - </td></tr>
 			<tr class="studyMetrics"> <td class="leftColumn"> User : </td> <td id="userSize"> - </td> <td id="userFiles"> - </td></tr>
-			<tr class="studyMetrics"> <td class="leftColumn"> Total : </td> <td id="totalSize"> - </td> <td id="totalFiles"> - </td></tr>
-			<tr class="archiveMetrics" style="display:none;"> <td class="leftColumn"> Compressed : </td> <td id="compressedSize"> - </td> <td id="compressedFiles"> - </td></tr>
-			<tr class="archiveMetrics" style="display:none;"> <td class="leftColumn"> Uncompressed : </td> <td id="uncompressedSize"> - </td> <td id="uncompressedFiles"> - </td></tr>
+			<tr class="studyOrFolder"> <td class="leftColumn"> Total : </td> <td id="totalSize"> - </td> <td id="totalFiles"> - </td></tr>
+			<tr  class="archiveOrAblob" style="display:none;"> <td class="leftColumn"> Compressed : </td> <td id="compressedSize"> - </td> <td id="compressedFiles"> - </td></tr>
+			<tr  class="archiveOrAblob" style="display:none;"> <td class="leftColumn"> Uncompressed : </td> <td id="uncompressedSize"> - </td> <td id="uncompressedFiles"> - </td></tr>
 		</table><\div>
 	<div id="usersNotes">
 		<table>
