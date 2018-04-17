@@ -25,4 +25,7 @@ or add --download.cache=C:\Users\sylvmara\AppData\Roaming\npm-cache with the req
 
 The --no-prune option is to take elements directly from node modules, which is sometimes necessary
 
+Ex :
+C:\Users\sylvmara\AppData\Roaming\npm\electron-packager.cmd .\electron_app AntaresDataOrganizer --platform=win32 --arch=ia32 --asar=true --icon=AntaresDataOrganizer.ico --electron-version=1.8.2 --no-prune --download.cache=C:\Users\sylvmara\AppData\Roaming\npm-cache
+
 then compile test.nsi in this repertory
