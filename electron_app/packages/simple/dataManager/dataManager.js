@@ -251,13 +251,13 @@ function execAcat(){
 	notDone=0;
 	nbShadowTasks=0;
 	nbErrorMain=0;
-	showfile="";
+	showFile="";
 	var infoText=document.getElementById('simple.03').shadowRoot.getElementById('infos');
 	for(var i=0; i<sizeBeginning; i++){//Complete the array with indices of valid operations
 		if(showList.childNodes[i].firstChild.checked){
 			twoDimsArray[SHOW][i]=1;
 			nbTasks++;
-			if(showfile==""){
+			if(showFile==""){
 				try{
 					showFile=path.join(path.parse(logPath).dir,"show_"+(new Date().toISOString().replace(/T/, '_').replace(/\..+/, '').replace(/:/g,'').replace(/-/g,''))+"_"+path.parse(pathMain).name+".txt");
 				}
@@ -325,12 +325,12 @@ function execFolder(){
 	notDone=0;
 	nbShadowTasks=0;
 	nbErrorMain=0;
-	showfile="";
+	showFile="";
 	for(var i=0; i<jsonTabFolder.TypePath.length; i++){//Complete the array with indices of valid operations
 		if(showList.childNodes[i].firstChild.checked){
 			twoDimsArray[SHOW][i]=1;
 			nbTasks++;
-			if(showfile==""){
+			if(showFile==""){
 				try{
 					var tzoffset = (new Date()).getTimezoneOffset() * 60000;
 					showFile=path.join(path.parse(logPath).dir,"show_"+(new Date(Date.now() - tzoffset).toISOString().replace(/T/, '_').replace(/\..+/, '').replace(/:/g,'').replace(/-/g,''))+"_"+path.parse(pathMain).name+".txt");
