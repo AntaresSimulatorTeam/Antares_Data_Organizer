@@ -178,7 +178,7 @@ function execScat(){
 		if(showList.childNodes[i].firstChild.checked){
 			twoDimsArray[SHOW][i]=1;
 			nbTasks++;
-			if(showfile==""){
+			if(showFile==""){
 				try{
 					var tzoffset = (new Date()).getTimezoneOffset() * 60000;
 					showFile=path.join(path.parse(logPath).dir,"show_"+(new Date(Date.now() - tzoffset).toISOString().replace(/T/, '_').replace(/\..+/, '').replace(/:/g,'').replace(/-/g,''))+"_"+path.parse(pathMain).name+".txt");
@@ -639,7 +639,7 @@ function internalExecFolder(indice,itabValidIndices,twoDimsArray,tabValidIndices
 		disableDelete+=retAr;
 		nbError+=retAr;
 	}
-	if(twoDimsArray[EXPAND][indice] && (jsonTabFolder.TypePath[indice].type=="archive" || jsonTabFolder.TypePath[indice].type=="pack ")){
+	if(twoDimsArray[EXPAND][indice] && (jsonTabFolder.TypePath[indice].type=="archive" || jsonTabFolder.TypePath[indice].type=="pack")){
 		loggerExec.verbose("\r\nExpanding :" );
 		var retEx=expandStudy(jsonTabFolder.TypePath[indice].path);
 		disableDelete+=retEx;
