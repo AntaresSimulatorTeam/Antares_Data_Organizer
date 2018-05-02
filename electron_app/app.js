@@ -1,20 +1,26 @@
-'use strict';
+'use strict'; //More warnings and errors
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//Libraries used
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 const electron = require('electron');
 const remote = electron.remote;
 const Editor = require('./node_modules/editor-framework/index');
 const path = require('path');
 const winston= require('winston');
 const fs = require('fs-plus');
+//Change to relase before delivery
 const appLevel='debug';
 //const appLevel='release';
 
 let _url2path = base => {
-return uri => {
-if ( uri.pathname ) {
-return Path.join( base, uri.host, uri.pathname );
-}
-return Path.join( base, uri.host );
-};
+	return uri => {
+		if ( uri.pathname ) {
+			return Path.join( base, uri.host, uri.pathname );
+		}
+		return Path.join( base, uri.host );
+	};
 };
 Editor.Protocol.register('app://layout.json', _url2path(Editor.frameworkPath));
 
@@ -112,6 +118,7 @@ Editor.App.extend({
       minHeight: 600,
       show: false,
       resizable: true,
+      icon: path.join(__dirname + '../resources/dataorganizer.png'), 
     });
     Editor.Window.main = mainWin;
 
@@ -123,7 +130,6 @@ Editor.App.extend({
 
     // page-level test case
     mainWin.load( 'app://index.html' );
-
     // open dev tools if needed
     if ( Editor.argv.showDevtools ) {
       // NOTE: open dev-tools before did-finish-load will make it insert an unused <style> in page-level

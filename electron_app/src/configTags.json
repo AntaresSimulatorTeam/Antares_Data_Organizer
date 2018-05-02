@@ -12,7 +12,7 @@
 	},
 	{
 		"tagName":"Global",
-		"tagColor":"#003300"
+		"tagColor":"#006900"
 	},
 	{
 		"tagName":"Distrib",
@@ -87,7 +87,7 @@
 	},
 	{
 		"tagName":"Nuclear",
-		"tagColor":"#003300"
+		"tagColor":"#c7cc00"
 	},
 	{
 		"groupName":"Date :"

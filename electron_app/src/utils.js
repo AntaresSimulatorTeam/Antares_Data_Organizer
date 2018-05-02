@@ -1,3 +1,7 @@
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//Libraries used
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 const fs = require('fs-plus');
 const electron = require('electron');
 const path = require('path');
@@ -5,7 +9,7 @@ const remote = electron.remote;
 const app = remote.app;
 const appPath= app.getAppPath();
 const execSync = require('child_process').execSync;
-var hashdirectory = require('hashdirectory');
+const hashdirectory = require('hashdirectory');
 global.rootRequire = function(name) {
 	return require(app.getAppPath() + '/' + name);
 }
@@ -16,8 +20,17 @@ if(process.platform=="win32"){
 if(process.platform=="linux"){
 	os = rootRequire('src/linux.js');
 }
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//Usefull declarations
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 var exports = module.exports = {};
 var _this = this;
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//Functions to export
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 //Look at a path and determine if it is a compatible folder or not
 exports.isAdoFolder = function(pathFolder){
@@ -102,7 +115,6 @@ exports.getHashFromAntar = function(archivePath,password,loggerActions,loggerExe
 
 //Reads version from archive study/sudy.antares and returns it a a string x.x.x or "Not found" if not found
 exports.readVersionAntar = function(pathArchive,password,loggerActions,loggerExec){
-	
 	var cmd ='"'+os.getSevenZip(appPath, loggerActions)+'" e "'+pathArchive +'" "*'+path.join(exports.getExtNameFromAntar(pathArchive,password,loggerActions,loggerExec),"study.antares")+'" -r -so -p' + password;
 	try{
 		var stringFile=execSync(cmd);
@@ -172,7 +184,7 @@ exports.getTagsFromAntar = function(pathArchive,password,loggerActions,loggerExe
 	var ind = 1;
 	while(cont && ind<11){
 		var tag = exports.getMetaFromAntar(pathArchive,"TagNb_"+(("0" + ind).slice(-2)),password,loggerActions,loggerExec);
-		if(tag=="0"|| tag=="-"|| tag=="Error"){
+		if(tag=="0" || tag=="-" || tag=="Error"){
 			cont=false;
 		}
 		else{
@@ -183,8 +195,9 @@ exports.getTagsFromAntar = function(pathArchive,password,loggerActions,loggerExe
 	return tab;
 }
 
+//Normalizes the tag if necessary
 function verifTag(tag){
-	if(tag=="0" || tag=="-"|| tag=="Error"){
+	if(tag=="0" || tag=="-" || tag=="Error"){
 		return "";
 	}
 	if(tag.length>7){
@@ -247,7 +260,7 @@ exports.zeros = function(dimensions) { //zeros([length,height])
     return array;
 }
 
-//used in the logger
+//used in the logger to format the lines
 exports.customFileFormatter = function(args) {
     // Return string will be passed to logger.
     if(args.level!='verbose'){
@@ -310,6 +323,7 @@ exports.tickUntickAll = function(list){
 	}
 }
 
+// Extract lines from a pack/info.ado, and return them
 exports.getLinesFromAblob = function(pathArchive,logger,password){
 	var cmd ='"'+os.getSevenZip(appPath, logger)+'" e "'+pathArchive +'" "*'+ path.join(exports.getExtNameFromAntar(pathArchive,password,logger,0),"info.ado")+'" -r -so -p' + password;
 	try{
@@ -419,7 +433,7 @@ exports.getLinesFromXml = function(stringFile){
                .replace(/&lt;/g, '<')
                .replace(/&gt;/g, '>')
                .replace(/&quot;/g, '"')
-               .replace(/&apos;/g, '\'');;
+               .replace(/&apos;/g, '\'');
 }
 
 

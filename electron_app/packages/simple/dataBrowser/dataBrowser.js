@@ -1,4 +1,9 @@
-'use strict';
+'use strict'; //More warnings and errors
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//Libraries and constants used
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 const electron = require('electron');
 const remote = electron.remote;
 const dialog= remote.dialog;
@@ -16,7 +21,7 @@ if(process.platform=="win32"){
 }
 if(process.platform=="linux"){
 	os = rootRequire('src/linux.js');
-	copyCmd="";
+	copyCmd="";//does not work
 }
 const fs = require('fs-plus');
 const fsUtils = require("nodejs-fs-utils");
@@ -26,17 +31,23 @@ const child_process = require('child_process');
 const execSync = require('child_process').execSync;
 const appPath= app.getAppPath();
 const jsonTag= rootRequire('src/configTags.json');
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//Usefull declarations and global variables
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 var password=remote.getGlobal('sharedObj').password; 
 var pathMain;
 var loggerActions=remote.getGlobal('sharedObj').loggerActions; 
 var args = remote.process.argv;
 var styleTagDefined=false;
 
+//Getting the arguments and checking if there is any instruction for this pannel
 if(args.length>1){
 	if(args[args.length-2]=="-s"){
 		if(fs.existsSync(args[args.length-1])){
 			pathMain=path.parse(args[args.length-1]).dir;
-			setTimeout(function() {
+			setTimeout(function() {//let time for the app to start
 				display();
 				Editor.Panel.focus('simple.02');
 			},100);
@@ -53,8 +64,9 @@ if(args.length>1){
 	}
 }
 
-
-
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//Functions
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 //sets the archive properties from path
 function getMetricsFromAntar(pathArchive){
@@ -101,10 +113,9 @@ function getMetricsFromAntar(pathArchive){
 				document.getElementById('simple.02').shadowRoot.getElementById('OrigSCat').onclick=child_process.spawn(copyCmd).stdin.end(res);
 			}
 		}
-		else document.getElementById('simple.02').shadowRoot.getElementById('OrigSCat').innerHTML="-";
 	}
 	catch(err){
-		document.getElementById('simple.02').shadowRoot.getElementById('OrigSCat').innerHTML="-";
+		//do nothing
 	}
 }
 
@@ -177,6 +188,7 @@ function getHtmlFromAntar(){
 
 //get the global variables and use them to refresh the page
 function display(){
+	//Reset all the text zones
 	document.getElementById('simple.02').shadowRoot.getElementById('location').innerHTML="-";
 	document.getElementById('simple.02').shadowRoot.getElementById('IntName').innerHTML="-";
 	document.getElementById('simple.02').shadowRoot.getElementById('totalSize').innerHTML="-";
@@ -202,6 +214,7 @@ function display(){
 	for(var i =0;i<10;i++){
 		document.getElementById('simple.02').shadowRoot.getElementById('tag_'+("0" + (i+1)).slice(-2)).style.display="none";
 	}
+	//Setting the displays to visible or unvisible according to the type
 	if(path.extname(pathMain)===".ablob"){
 		document.getElementById('simple.02').shadowRoot.getElementById('notes').style.top="310px";
 		document.getElementById('simple.02').shadowRoot.getElementById('ArchName').innerHTML=path.parse(pathMain).base;
@@ -302,13 +315,12 @@ function display(){
 			studyOrFolder[i].style.display="";
 		}
 	}
-	
 	setTimeout(function () {displayAll()},100);//letting time to refresh
 }
 
+// Load the properties of the document and displays them
 function displayAll(){
-	var OptGroupDefined=false;
-	if(styleTagDefined==false && jsonTag && jsonTag.tags && jsonTag.tags.length>0){
+	if(styleTagDefined==false && jsonTag && jsonTag.tags && jsonTag.tags.length>0){ //loading the tags options from json file if this function is called for the first time
 		styleTagDefined=true;
 		for(var i=0;i<jsonTag.tags.length;i++){
 			if(jsonTag.tags[i].tagName){
@@ -356,9 +368,7 @@ function displayAll(){
 		document.getElementById('simple.02').shadowRoot.getElementById('compressedFiles').innerHTML="1";
 		document.getElementById('simple.02').shadowRoot.getElementById('uncompressedSize').innerHTML=common.formatBytes(utils.getMetaFromAntar(pathMain,'TotlSize',password,loggerActions,0),3);
 		document.getElementById('simple.02').shadowRoot.getElementById('uncompressedFiles').innerHTML=utils.getMetaFromAntar(pathMain,'TotlFile',password,loggerActions,0);
-		//getArchiveProperties(pathMain);
 		getMetricsFromAntar(pathMain);
-		document.getElementById('simple.02').shadowRoot.getElementById('notes').innerHTML="-";
 		var htmlFromAntar=getHtmlFromAntar();
 		document.getElementById('simple.02').shadowRoot.getElementById('notes').innerHTML=utils.getLinesFromAblob(pathMain,loggerActions,password);
 		if(copyCmd){
@@ -391,7 +401,6 @@ function displayAll(){
 		document.getElementById('simple.02').shadowRoot.getElementById('uncompressedSize').innerHTML=common.formatBytes(utils.getMetaFromAntar(pathMain,'TotlSize',password,loggerActions,0),3);
 		document.getElementById('simple.02').shadowRoot.getElementById('uncompressedFiles').innerHTML=utils.getMetaFromAntar(pathMain,'TotlFile',password,loggerActions,0);
 		document.getElementById('simple.02').shadowRoot.getElementById('StdHash').innerHTML=utils.getHashFromAntar(pathMain,password,loggerActions,0);
-		//getArchiveProperties(pathMain);
 		getMetricsFromAntar(pathMain);
 		var htmlFromAntar=getHtmlFromAntar();
 		document.getElementById('simple.02').shadowRoot.getElementById('notes').innerHTML=htmlFromAntar;
@@ -411,7 +420,7 @@ function displayAll(){
 			document.getElementById('simple.02').shadowRoot.getElementById('notes').innerHTML=fs.readFileSync(info, 'utf8');
 		}
 	}
-	else{
+	else{//study
 		document.getElementById('simple.02').shadowRoot.getElementById('ExtName').innerHTML=path.parse(pathMain).base;
 		if(copyCmd){
 			document.getElementById('simple.02').shadowRoot.getElementById('ExtName').onclick=child_process.spawn(copyCmd).stdin.end(path.parse(pathMain).base);
@@ -524,7 +533,7 @@ function deleteTag(tag_index){
 		
 	}
 	else{
-		dialog.showErrorBox("Error", "Wrong tag id.");
+		dialog.showErrorBox("Error", "Wrong tag id.");//Should not happen unless the file is modified by more than one user at a time
 	}
 }
 
@@ -539,6 +548,7 @@ function refreshTags(){
 		document.getElementById('simple.02').shadowRoot.getElementById('tag_'+("0" + (i+1)).slice(-2)).style.display="";
 		document.getElementById('simple.02').shadowRoot.getElementById('tag_'+("0" + (i+1)).slice(-2)).className="c"+tags[i];
 	}
+	Editor.Ipc.sendToPanel('simple.03','refreshTag');
 }
 
 //Adds a tag
@@ -653,18 +663,8 @@ Editor.Panel.extend({
 	}
 	ul#TagList span{
 		position:relative;
-		top:-3px;
+		top:-2px;
 		color:black;
-	}
-	#buttonAdd{
-		background-color:#bdbdbd;
-		color:#474747;
-		border:2px solid #333333;
-		cursor: pointer;
-		position:relative;
-		top:2px;
-		padding-left:2px;
-		padding-right:2px;
 	}
 	select option:disabled {
 		color: red;
@@ -699,7 +699,7 @@ Editor.Panel.extend({
 			<li style="display:none;" id="tag_09"> <span id="tag_09_txt"> - </span> <span class="blackCross" onClick="Editor.Ipc.sendToPanel('simple.02','del_09')">×</span></li>
 			<li style="display:none;" id="tag_10"> <span id="tag_10_txt"> - </span> <span class="blackCross" onClick="Editor.Ipc.sendToPanel('simple.02','del_10')">×</span></li>
 			</ul></td>
-			<tr class="studyMetrics"><td class="leftColumn">Add tag :</td><td class="leftColumn"> <SELECT id="selectTag"></SELECT>  <span id="buttonAdd" onClick="Editor.Ipc.sendToPanel('simple.02','addTag')">Add</span> </td></tr>
+			<tr class="studyMetrics"><td class="leftColumn">Add tag :</td><td class="leftColumn"> <SELECT id="selectTag"></SELECT>  <button type="button" id="buttonAdd" onClick="Editor.Ipc.sendToPanel('simple.02','addTag')">Add</button> </td></tr>
 		</tr>
 		</table><\div>
 	<div id="metrics">

@@ -8,5 +8,6 @@ cp resources/scat.ico AntaresDataOrganizer-linux-x64/resources/scat.png
 cp resources/antar.ico AntaresDataOrganizer-linux-x64/resources/antar.png
 mkdir AntaresDataOrganizer
 mv AntaresDataOrganizer-linux-x64 AntaresDataOrganizer/AntaresDataOrganizer-linux-x64
-ln AntaresDataOrganizer/AntaresDataOrganizer-linux-x64/AntaresDataOrganizer AntaresDataOrganizer/AntaresDataOrganizer 
+cd AntaresDataOrganizer
+ln -s AntaresDataOrganizer-linux-x64/AntaresDataOrganizer AntaresDataOrganizer 
 

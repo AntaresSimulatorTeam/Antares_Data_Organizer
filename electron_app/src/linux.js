@@ -1,33 +1,29 @@
 var exports = module.exports = {};
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//Libraries used
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 const fs = require('fs-plus');
-var path = require('path');
+const path = require('path');
 const child_process = require('child_process');
 const execSync = require('child_process').execSync;
+const electron = require('electron');
+const remote = electron.remote;
+const dialog= remote.dialog;
 
-//get the 7z.exe path
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//Functions to export
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+//return 7za if it is visible on path, else shows an error box
 exports.getSevenZip = function(appPath,logger){
-	return "7za";
-}
-
-//get hash using 7zip exe
-exports.getHashStudy = function(studyPath,logger){
-	
-	var cmd ='shasum "'+studyPath +'"';
-
 	try{
-		var stringCmd=execSync(cmd).toString();
-		if(!stringCmd){//if there is no result
-			return "error";
-		}
-		var crc=stringCmd.split(" ")[0];
-		logger.debug("Hash from " + studyPath +" : " +crc);
-		if(crc){
-			return crc;
-		}
-		else return "error";
+		execSync("7za");
+		return "7za";
 	}
 	catch(err){
-		logger.debug(err + " inside getHashStudy");
+		dialog.showErrorBox("Error", "7za is not in range. Please install it globally for Antares Data Organizer to function properly.");
 		return "error";
 	}
 }
