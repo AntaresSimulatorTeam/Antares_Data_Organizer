@@ -4,3 +4,6 @@ body {
 h1 {
       color: #09f;
 }
+form{	
+    line-height: 17px;
+}

@@ -1,15 +1,4 @@
 
-to upgrade electron version (current 1.8.2) and reset npm packages :
-
-set the proxies
-npm config set registry http://registry.npmjs.org/
-git config --global url."https://".insteadOf git://
-npm config set proxy http://usr:pwd@163.104.40.34:3128
-npm config set https-proxy http://usr:pwd@163.104.40.34:3128
-npm install
-
-Then, in the package editor_framework, copy all the files found in editor_framework_update (this changes the name of the app in en.js, hides the possibility of detached tabs in panel/tabs.js, hides some unused menus in main/main-menus.js and changes the home directory in main/app.js
-
 to create package
 electron-packager . AntaresDataOrganizer --platform=win32 --arch=ia32 --asar --icon=AntaresDataOrganizer.ico
 or
@@ -28,4 +17,3 @@ The --no-prune option is to take elements directly from node modules, which is s
 Ex :
 C:\Users\sylvmara\AppData\Roaming\npm\electron-packager.cmd .\electron_app AntaresDataOrganizer --platform=win32 --arch=ia32 --asar=true --icon=AntaresDataOrganizer.ico --electron-version=1.8.2 --no-prune --download.cache=C:\Users\sylvmara\AppData\Roaming\npm-cache
 
-then compile test.nsi in this repertory

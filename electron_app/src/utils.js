@@ -295,9 +295,9 @@ exports.isArchive = function(pathArchive){
 	return false;
 }
 
-//checks if a path is an ablob
+//checks if a path is an antpack
 exports.isAblob = function(pathArchive){
-	if(path.extname(pathArchive)==='.ablob'){
+	if(path.extname(pathArchive)==='.antpack'){
 		try{
 			fs.statSync(pathArchive);
 		  }catch(err){

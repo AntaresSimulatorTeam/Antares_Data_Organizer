@@ -215,7 +215,7 @@ function display(){
 		document.getElementById('simple.02').shadowRoot.getElementById('tag_'+("0" + (i+1)).slice(-2)).style.display="none";
 	}
 	//Setting the displays to visible or unvisible according to the type
-	if(path.extname(pathMain)===".ablob"){
+	if(path.extname(pathMain)===".antpack"){
 		document.getElementById('simple.02').shadowRoot.getElementById('notes').style.top="310px";
 		document.getElementById('simple.02').shadowRoot.getElementById('ArchName').innerHTML=path.parse(pathMain).base;
 		var studyMetrics=document.getElementById('simple.02').shadowRoot.querySelectorAll('.studyMetrics');
@@ -353,7 +353,7 @@ function displayAll(){
 	if(copyCmd){
 		document.getElementById('simple.02').shadowRoot.getElementById('location').onclick=child_process.spawn(copyCmd).stdin.end(path.parse(pathMain).dir);
 	}
-	if(path.extname(pathMain)===".ablob"){
+	if(path.extname(pathMain)===".antpack"){
 		document.getElementById('simple.02').shadowRoot.getElementById('ArchName').innerHTML=path.parse(pathMain).base;
 		if(copyCmd){
 			document.getElementById('simple.02').shadowRoot.getElementById('ArchName').onclick=child_process.spawn(copyCmd).stdin.end(path.parse(pathMain).base);

@@ -92,6 +92,8 @@ SetOutPath $INSTDIR
 # define what to install and place it in the output path
 File /r ${DISTRIBFOLDERNAME}
 
+!define EXEPATH "$InstDir\${DISTRIBFOLDERNAME}\AntaresDataOrganizer.exe"
+
 # define uninstaller name
 WriteUninstaller "$INSTDIR\uninstaller.exe"
 #writing last byte of uninstaller wich stores value admin=0 or 1
@@ -101,13 +103,39 @@ FileSeek $1 0 END
 FileWriteByte $1 $0
 FileClose $1
 ${If} $0 > 0
-	WriteRegStr HKCR ".scat\DefaultIcon" "" "$INSTDIR\${DISTRIBFOLDERNAME}\resources\scat.ico"
+	WriteRegStr HKCR ".scat" "" "AntaresDataOrgCat"
+	WriteRegStr HKCR ".acat" "" "AntaresDataOrgCat"
+	WriteRegStr HKCR ".antpack" "" "AntaresDataOrgPack"
+	WriteRegStr HKCR ".ado" "" "AntaresDataOrgAdo"
+	WriteRegStr HKCR ".antar" "" "AntaresDataOrgAntar"
+	WriteRegStr HKCR "AntaresDataOrgCat\shell\open\command" "" '"${EXEPATH}" -c "%1"'
+	WriteRegStr HKCR "AntaresDataOrgPack\shell\open\command" "" '"${EXEPATH}" -a "%1"'
+	WriteRegStr HKCR "AntaresDataOrgAntar\shell\open\command" "" '"${EXEPATH}" -a "%1"'
+	WriteRegStr HKCR "AntaresDataOrgAdo\shell\open\command" "" '"${EXEPATH}" -s "%1"'
 	WriteRegStr HKCR ".antar\DefaultIcon" "" "$INSTDIR\${DISTRIBFOLDERNAME}\resources\antar.ico"
 	WriteRegStr HKCR ".acat\DefaultIcon" "" "$INSTDIR\${DISTRIBFOLDERNAME}\resources\acat.ico"
+	WriteRegStr HKCR ".antpack\DefaultIcon" "" "$INSTDIR\${DISTRIBFOLDERNAME}\resources\antpack.ico"
+	WriteRegStr HKCR ".ado\DefaultIcon" "" "$INSTDIR\${DISTRIBFOLDERNAME}\resources\ado.ico"
+	WriteRegStr HKCR ".scat\DefaultIcon" "" "$INSTDIR\${DISTRIBFOLDERNAME}\resources\scat.ico"
+	WriteRegStr HKCR "Directory\Shell\ado" "" "Open into Antares Data Organizer"
+	WriteRegStr HKCR "Directory\Shell\ado\command" "" '"${EXEPATH}" -p "%1"'
 ${Else}
 	WriteRegStr HKCU "Software\classes\.scat\DefaultIcon" "" "$INSTDIR\${DISTRIBFOLDERNAME}\resources\scat.ico"
 	WriteRegStr HKCU "Software\classes\.antar\DefaultIcon" "" "$INSTDIR\${DISTRIBFOLDERNAME}\resources\antar.ico"
 	WriteRegStr HKCU "Software\classes\.acat\DefaultIcon" "" "$INSTDIR\${DISTRIBFOLDERNAME}\resources\acat.ico"
+	WriteRegStr HKCU "Software\classes\.antpack\DefaultIcon" "" "$INSTDIR\${DISTRIBFOLDERNAME}\resources\antpack.ico"
+	WriteRegStr HKCU "Software\classes\.ado\DefaultIcon" "" "$INSTDIR\${DISTRIBFOLDERNAME}\resources\ado.ico"
+	WriteRegStr HKCU "Software\classes\.scat" "" "AntaresDataOrgCat"
+	WriteRegStr HKCU "Software\classes\.acat" "" "AntaresDataOrgCat"
+	WriteRegStr HKCU "Software\classes\.antpack" "" "AntaresDataOrgPack"
+	WriteRegStr HKCU "Software\classes\.antar" "" "AntaresDataOrgAntar"
+	WriteRegStr HKCU "Software\classes\.ado" "" "AntaresDataOrgAdo"
+	WriteRegStr HKCU "Software\classes\AntaresDataOrgCat\shell\open\command" "" '"${EXEPATH}" -c "%1"'
+	WriteRegStr HKCU "Software\classes\AntaresDataOrgAntar\shell\open\command" "" '"${EXEPATH}" -a "%1"'
+	WriteRegStr HKCU "Software\classes\AntaresDataOrgPack\shell\open\command" "" '"${EXEPATH}" -a "%1"'
+	WriteRegStr HKCU "Software\classes\AntaresDataOrgAdo\shell\open\command" "" '"${EXEPATH}" -s "%1"'
+	WriteRegStr HKCU "Software\classes\Directory\Shell\ado" "" "Open into Antares Data Organizer"
+	WriteRegStr HKCU "Software\classes\Directory\Shell\ado\command" "" '"${EXEPATH}" -p "%1"'
 ${EndIf}
 
 CreateShortCut "$INSTDIR\${APPNAME} ${VERSIONNUMBER}.lnk" "$INSTDIR\${DISTRIBFOLDERNAME}\AntaresDataOrganizer.exe" "" "$INSTDIR\${DISTRIBFOLDERNAME}\resources\dataorganizer.ico"
@@ -136,11 +164,18 @@ ${If} $0 > 0
 	 Push "$INSTDIR"		#Delete instdir only if empty after installed filed has been deleted
 	Call un.isEmptyDir
 	Pop $0
-	 StrCmp $0 1 0 +2
+	 StrCmp $0 1 0 +2, 
 	rmdir "$INSTDIR" 
-	DeleteRegKey HKCR ".scat\DefaultIcon" 
-	DeleteRegKey HKCR ".antar\DefaultIcon" 
-	DeleteRegKey HKCR ".acat\DefaultIcon"
+	DeleteRegKey HKCR ".scat" 
+	DeleteRegKey HKCR ".antar" 
+	DeleteRegKey HKCR ".acat"
+	DeleteRegKey HKCR ".antpack"
+	DeleteRegKey HKCR ".ado"
+	DeleteRegKey HKCR "AntaresDataOrgAntar"
+	DeleteRegKey HKCR "AntaresDataOrgCat"
+	DeleteRegKey HKCR "AntaresDataOrgPack"
+	DeleteRegKey HKCR "AntaresDataOrgAdo"
+	DeleteRegKey HKCR "Directory\Shell\ado"
 	${Else}
 	MessageBox MB_OK "Please run this uninstaller as admin."
 	${EndIf}
@@ -158,6 +193,14 @@ ${Else}
 	DeleteRegKey HKCU "Software\classes\.acat"
 	DeleteRegKey HKCU "Software\classes\.scat"
 	DeleteRegKey HKCU "Software\classes\.antar"
+	DeleteRegKey HKCU "Software\classes\.antpack"
+	DeleteRegKey HKCU "Software\classes\.ado"
+	DeleteRegKey HKCU "Software\classes\AntaresDataOrgAntar"
+	DeleteRegKey HKCU "Software\classes\AntaresDataOrgCat"
+	DeleteRegKey HKCU "Software\classes\AntaresDataOrgPack"
+	DeleteRegKey HKCU "Software\classes\AntaresDataOrgAdo"
+	DeleteRegKey HKCU "Software\classes\Directory\Shell\ado"
 ${EndIf}
 SectionEnd
+
 

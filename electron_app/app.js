@@ -11,8 +11,8 @@ const path = require('path');
 const winston= require('winston');
 const fs = require('fs-plus');
 //Change to relase before delivery
-const appLevel='debug';
-//const appLevel='release';
+//const appLevel='debug';
+const appLevel='release';
 
 let _url2path = base => {
 	return uri => {

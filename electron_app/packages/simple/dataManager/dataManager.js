@@ -70,7 +70,7 @@ var nbShadowTasks=0; //Tasks that are not directly defined by the user but are i
 var nbErrorMain=0;
 var upDown="up";//Defines the jsonTabFolder sorting direction
 var tagSelected="";
-var dispType="all";// sf for study and folders or aa for ablob and archives
+var dispType="all";// sf for study and folders or aa for antpack and archives
 var researchDepth=10;
 var loggerActions=remote.getGlobal('sharedObj').loggerActions; 
 var password=remote.getGlobal('sharedObj').password; 
@@ -866,7 +866,7 @@ function deleteTempFiles(studyName){
 function deleteFileIfExists(filePath){
 	try{
 		if (fs.existsSync(filePath)){
-			fs.unlink(filePath);
+			fs.unlinkSync(filePath);
 		}
 	}
 	catch(err){
@@ -1050,12 +1050,12 @@ function archiveFolder(pathStudy){
 	else{
 		destinationPath=path.parse(pathStudy).dir;
 	}
-	var archiveDest=path.join(destinationPath,pathStudy.match(/([^\\|\/]*)\/*$/)[1])+'.ablob';
+	var archiveDest=path.join(destinationPath,pathStudy.match(/([^\\|\/]*)\/*$/)[1])+'.antpack';
 	var addNumber=0;
 	while(fs.existsSync(archiveDest)){
 		if(addNumber<999){
 			addNumber++;
-			archiveDest=path.join(destinationPath,pathStudy.match(/([^\\|\/]*)\/*$/)[1])+"@"+utils.leftPad(addNumber,3)+'.ablob';
+			archiveDest=path.join(destinationPath,pathStudy.match(/([^\\|\/]*)\/*$/)[1])+"@"+utils.leftPad(addNumber,3)+'.antpack';
 		}
 		else{
 			loggerExec.error(pathStudy + " has not been archived : too many copies at the same place");
@@ -2808,7 +2808,8 @@ style: `
 		bottom:14px;
 		height:7px;
 		left:275px;
-		text-overflow: ellipsis;
+		text-overflow: clip;
+		width:900px;
 	}
 	#checkDelay{
 		position : absolute;
@@ -2921,8 +2922,8 @@ template: `
 	<div style="width=100%;height:100%;display: flex;" id="maindiv">
 	<form id="selectType" onClick="Editor.Ipc.sendToPanel('simple.03','changeType')">
 		<input type="radio" name="dispType" value="all" checked>All
-		<input type="radio" name="dispType" value="sf">Studies and folders
-		<input type="radio" name="dispType" value="aa">Archives and ablobs
+		<input type="radio" name="dispType" value="sf">Studies and chests
+		<input type="radio" name="dispType" value="aa">Archives and packs
 	</form>
 	<div id="slidecontainer">
 		<p>Research depth : 0 <input type="range" min="0" max="50" value="10" id="rDepth" onchange="Editor.Ipc.sendToPanel('simple.03','changeDepth')"> 50</p>
