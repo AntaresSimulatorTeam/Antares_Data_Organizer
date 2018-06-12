@@ -62,7 +62,7 @@ var DELETE=7;
 var cancelAll=0; // Set to one to stop execution
 var logPath=remote.getGlobal('sharedObj').logPath;
 var logExecPath;
-var nbTasks=0;
+var nbTasks=0;   
 var nbTasksOk=0;
 var showFile="";
 var notDone=0;
@@ -77,6 +77,9 @@ var password=remote.getGlobal('sharedObj').password;
 var appLevel=remote.getGlobal('sharedObj').appLevel; 
 var loggerExec;
 var args = remote.process.argv;
+const archiveOptSpeed=" -mx1 -t7z -mhe ";
+const archiveOptSize=" -mx9 -t7z -mhe -mmt=on ";
+var archiveOpt=archiveOptSpeed;
 
 //Getting the arguments and checking if there is any instruction for this pannel
 if(args.length>1){
@@ -968,7 +971,7 @@ function archiveStudy(pathStudy){
 		return 1;
 	}
 	if(destFolder!="" && document.getElementById('simple.03').shadowRoot.getElementById('destFolderCheck').checked){
-		var cmd ='"'+os.getSevenZip(appPath, loggerActions)+'" a -mx1 -t7z -mhe "'+archiveDest+'" "'+ pathStudy+'" -p' + password;
+		var cmd ='"'+os.getSevenZip(appPath, loggerActions)+'" a' + archiveOpt + '"' + archiveDest + '" "'+ pathStudy + '" -p' + password;
 	
 		try{
 			var ret=execSync(cmd);
@@ -1000,7 +1003,7 @@ function archiveStudy(pathStudy){
 		}
 	}
 	else{
-		var cmd = '"'+os.getSevenZip(appPath, loggerActions)+'" a -mx1 -t7z "'+archiveDest+'" "'+ pathStudy+'" -mhe -p' + password;
+		var cmd = '"'+os.getSevenZip(appPath, loggerActions)+'" a'+ archiveOpt + '"'+archiveDest+'" "'+ pathStudy+'" -mhe -p' + password;
 		try{
 			var ret=execSync(cmd);
 			
@@ -1102,7 +1105,7 @@ function archiveFolder(pathStudy){
 		return 1;
 	}
 	if(destFolder!="" && document.getElementById('simple.03').shadowRoot.getElementById('destFolderCheck').checked){
-		var cmd ='"'+os.getSevenZip(appPath, loggerActions)+'" a -mx1 -t7z -mhe "'+archiveDest+'" "'+ pathStudy+'" -p' + password;
+		var cmd ='"'+os.getSevenZip(appPath, loggerActions)+'" a ' + archiveOpt + ' "'+archiveDest+'" "'+ pathStudy+'" -p' + password;
 	
 		try{
 			var ret=execSync(cmd);
@@ -1134,7 +1137,7 @@ function archiveFolder(pathStudy){
 		}
 	}
 	else{
-		var cmd = '"'+os.getSevenZip(appPath, loggerActions)+'" a -mx1 -t7z "'+archiveDest+'" "'+ pathStudy+'" -mhe -p' + password;
+		var cmd = '"'+os.getSevenZip(appPath, loggerActions)+'" a ' + archiveOpt + ' "'+archiveDest+'" "'+ pathStudy+'" -mhe -p' + password;
 		try{
 			var ret=execSync(cmd);
 			
@@ -2906,15 +2909,108 @@ style: `
 		right:0px;
 		display: flex;
 	}
+	#selectRatio{
+		position:absolute;
+		right:1px;
+		display: flex;
+		top:20px;
+	}
 	#slidecontainer{
 		position:absolute;
 		right:5px;
-		top : 10px;
+		top : 28px;
+		height: 1px;
 	}
 	#rDepth{
 		position:relative;
-		top : 6px;
+		top : -4px;
 	}
+	input[type=range] {
+	  -webkit-appearance: none;
+	  width: 150px;
+	  margin: 6.5px 0;
+	}
+	input[type=range]:focus {
+	  outline: none;
+	}
+	input[type=range]::-webkit-slider-runnable-track {
+	  width: 100%;
+	  height: 3px;
+	  cursor: pointer;
+	  box-shadow: 0.5px 0.5px 8.4px #000000, 0px 0px 0.5px #0d0d0d;
+	  background: #ffffff;
+	  border-radius: 23.3px;
+	  border: 0.3px solid #010101;
+	}
+	input[type=range]::-webkit-slider-thumb {
+	  box-shadow: 0.3px 0.3px 1px #000000, 0px 0px 0.3px #0d0d0d;
+	  border: 0.5px solid #000000;
+	  height: 16px;
+	  width: 5px;
+	  border-radius: 23px;
+	  background: #ffffff;
+	  cursor: pointer;
+	  -webkit-appearance: none;
+	  margin-top: -6.8px;
+	}
+	input[type=range]:focus::-webkit-slider-runnable-track {
+	  background: #ffffff;
+	}
+	input[type=range]::-moz-range-track {
+	  width: 100%;
+	  height: 3px;
+	  cursor: pointer;
+	  box-shadow: 0.5px 0.5px 8.4px #000000, 0px 0px 0.5px #0d0d0d;
+	  background: #ffffff;
+	  border-radius: 23.3px;
+	  border: 0.3px solid #010101;
+	}
+	input[type=range]::-moz-range-thumb {
+	  box-shadow: 0.3px 0.3px 1px #000000, 0px 0px 0.3px #0d0d0d;
+	  border: 0.5px solid #000000;
+	  height: 16px;
+	  width: 5px;
+	  border-radius: 23px;
+	  background: #ffffff;
+	  cursor: pointer;
+	}
+	input[type=range]::-ms-track {
+	  width: 100%;
+	  height: 3px;
+	  cursor: pointer;
+	  background: transparent;
+	  border-color: transparent;
+	  color: transparent;
+	}
+	input[type=range]::-ms-fill-lower {
+	  background: #ffffff;
+	  border: 0.3px solid #010101;
+	  border-radius: 46.6px;
+	  box-shadow: 0.5px 0.5px 8.4px #000000, 0px 0px 0.5px #0d0d0d;
+	}
+	input[type=range]::-ms-fill-upper {
+	  background: #ffffff;
+	  border: 0.3px solid #010101;
+	  border-radius: 46.6px;
+	  box-shadow: 0.5px 0.5px 8.4px #000000, 0px 0px 0.5px #0d0d0d;
+	}
+	input[type=range]::-ms-thumb {
+	  box-shadow: 0.3px 0.3px 1px #000000, 0px 0px 0.3px #0d0d0d;
+	  border: 0.5px solid #000000;
+	  height: 16px;
+	  width: 5px;
+	  border-radius: 23px;
+	  background: #ffffff;
+	  cursor: pointer;
+	  height: 3px;
+	}
+	input[type=range]:focus::-ms-fill-lower {
+	  background: #ffffff;
+	}
+	input[type=range]:focus::-ms-fill-upper {
+	  background: #ffffff;
+	}
+
 	`,
 
 template: `
@@ -2925,6 +3021,11 @@ template: `
 		<input type="radio" name="dispType" value="sf">Studies and chests
 		<input type="radio" name="dispType" value="aa">Archives and packs
 	</form>
+	<form id="selectRatio" onClick="Editor.Ipc.sendToPanel('simple.03','changeRatio')">
+		<legend>Compression algorythm :</legend>
+		<input type="radio" name="ratio" value="speed" checked>Speed
+		<input type="radio" name="ratio" value="comp">Compression Ratio
+	</form></p>
 	<div id="slidecontainer">
 		<p>Research depth : 0 <input type="range" min="0" max="50" value="10" id="rDepth" onchange="Editor.Ipc.sendToPanel('simple.03','changeDepth')"> 50</p>
 	</div>
@@ -3016,43 +3117,48 @@ messages: {
 			else if(radioButtons.children[2].checked){
 				dispType="aa";
 			}
-			if(dispType!="all"){
-				if(prevDispType!="all" || tagSelected){
-					jsonTabFolder={TypePath:[]};
+			try{
+				if(dispType!="all"){
+					if(prevDispType!="all" || tagSelected){
+						jsonTabFolder={TypePath:[]};
+					}
+					else{
+						jsonTabFolderSave=jsonTabFolder;
+						jsonTabFolder={TypePath:[]};
+					}
+					if(dispType=="sf"){
+						for(var i in jsonTabFolderSave.TypePath){
+							if(jsonTabFolderSave.TypePath[i].type=="study" || jsonTabFolderSave.TypePath[i].type=="chest"){
+									jsonTabFolder.TypePath.push(jsonTabFolderSave.TypePath[i]);
+							}
+						}
+					}
+					else if(dispType=="aa"){
+						for(var i in jsonTabFolderSave.TypePath){
+							if(jsonTabFolderSave.TypePath[i].type=="archive" || jsonTabFolderSave.TypePath[i].type=="pack"){
+									jsonTabFolder.TypePath.push(jsonTabFolderSave.TypePath[i]);
+							}
+						}
+					}
 				}
 				else{
-					jsonTabFolderSave=jsonTabFolder;
-					jsonTabFolder={TypePath:[]};
+					if(prevDispType!="all" || tagSelected){
+						jsonTabFolder=jsonTabFolderSave;
+					}
 				}
-				if(dispType=="sf"){
-					for(var i in jsonTabFolderSave.TypePath){
-						if(jsonTabFolderSave.TypePath[i].type=="study" || jsonTabFolderSave.TypePath[i].type=="chest"){
-								jsonTabFolder.TypePath.push(jsonTabFolderSave.TypePath[i]);
+				if(tagSelected){
+					var jsonTabTemp=jsonTabFolder;
+					jsonTabFolder = {TypePath:[]};
+					for(var i in jsonTabTemp.TypePath){
+						if(jsonTabTemp.TypePath[i].tag1==tagSelected || jsonTabTemp.TypePath[i].tag2==tagSelected || jsonTabTemp.TypePath[i].tag3==tagSelected){
+							jsonTabFolder.TypePath.push(jsonTabTemp.TypePath[i]);
 						}
 					}
-				}
-				else if(dispType=="aa"){
-					for(var i in jsonTabFolderSave.TypePath){
-						if(jsonTabFolderSave.TypePath[i].type=="archive" || jsonTabFolderSave.TypePath[i].type=="pack"){
-								jsonTabFolder.TypePath.push(jsonTabFolderSave.TypePath[i]);
-						}
-					}
+	Editor.log("d:"+jsonTabFolder.TypePath.length);
 				}
 			}
-			else{
-				if(prevDispType!="all" || tagSelected){
-					jsonTabFolder=jsonTabFolderSave;
-				}
-			}
-			if(tagSelected){
-				var jsonTabTemp=jsonTabFolder;
-				jsonTabFolder = {TypePath:[]};
-				for(var i in jsonTabTemp.TypePath){
-					if(jsonTabTemp.TypePath[i].tag1==tagSelected || jsonTabTemp.TypePath[i].tag2==tagSelected || jsonTabTemp.TypePath[i].tag3==tagSelected){
-						jsonTabFolder.TypePath.push(jsonTabTemp.TypePath[i]);
-					}
-				}
-Editor.log("d:"+jsonTabFolder.TypePath.length);
+			catch(err){
+				//do nothing, probably changed before init
 			}
 			displayJsonTabFolder();
 			
@@ -3436,7 +3542,16 @@ Editor.log("d:"+jsonTabFolder.TypePath.length);
 			}
 			displayJsonTabFolder();
 		},
-	}
+		changeRatio(){
+			var radioButtons=document.getElementById('simple.03').shadowRoot.getElementById('selectRatio');
+			if(radioButtons.children[1].checked){
+				archiveOpt=archiveOptSpeed;
+			}
+			else if(radioButtons.children[2].checked){
+				archiveOpt=archiveOptSize;
+			}
+		}
+	},
 });
 
 
