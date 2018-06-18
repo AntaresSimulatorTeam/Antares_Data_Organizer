@@ -35,7 +35,7 @@ RequestExecutionLevel Highest
 !define VERSIONNUMBER "1.1"
 
 # set the name of the installer
-Outfile "AntaresDataOrganizerInstallerV${VERSIONNUMBER}.exe"
+Outfile "AntaresDataOrganizerInstallerV${VERSIONNUMBER}-ia32.exe"
 
 !define DISTRIBFOLDERNAME "AntaresDataOrganizer-win32-ia32"
 InstallDir ""

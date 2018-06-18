@@ -3022,7 +3022,7 @@ template: `
 		<input type="radio" name="dispType" value="aa">Archives and packs
 	</form>
 	<form id="selectRatio" onClick="Editor.Ipc.sendToPanel('simple.03','changeRatio')">
-		<legend>Compression algorythm :</legend>
+		<legend>Compression algorithm :</legend>
 		<input type="radio" name="ratio" value="speed" checked>Speed
 		<input type="radio" name="ratio" value="comp">Compression Ratio
 	</form></p>
