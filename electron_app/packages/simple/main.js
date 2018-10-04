@@ -22,6 +22,9 @@ module.exports = {
 	open3 () {
       Editor.Panel.open('simple.03');
     },
+	open4 () {
+      Editor.Panel.open('simple.04');
+    },
 	openfile (){
 		Editor.Panel.open('simple.01');
 		openPanel1(Editor.Ipc.sendToPanel('simple.01','open'));
@@ -89,6 +92,9 @@ module.exports = {
 	},
 	openTrouble (){
 		Editor.Ipc.sendToPanel('simple.03','openTrouble');
+	},
+	openChest (){
+		Editor.Ipc.sendToPanel('simple.04','openChest');
 	},
 	openSink (){
 		Editor.Ipc.sendToPanel('simple.01','openRight');

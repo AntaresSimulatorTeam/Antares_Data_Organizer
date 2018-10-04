@@ -1,6 +1,6 @@
 {
   "name": "simple",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "Simple Package",
   "main": "main.js",
   "panel.01": {
@@ -30,6 +30,15 @@
 	"min-width": 1000,
 	"min-height":250
   },
+  "panel.04": {
+    "main": "chestEditor/chestEditor.js",
+    "type": "dockable",
+    "title": "Chest Manager",
+    "width": 1000,
+    "height": 300,
+	"min-width": 1000,
+	"min-height":250
+  },
     "main-menu": {
     "Panel/Catalog manager": {
       "message": "simple:open1"
@@ -39,6 +48,9 @@
     },
 	"Panel/Data Manager": {
       "message": "simple:open3"
+    },
+	"Panel/Chest Editor": {
+      "message": "simple:open4"
     },
 	"Origin/Open Portfolio": {
       "message": "simple:openMainFolder"
@@ -60,6 +72,9 @@
     },
 	"Sink/Open Sink": {
       "message": "simple:openSink"
+    },
+	"Chest/Open chest": {
+      "message": "simple:openChest"
     },
 	"Log/Open current log": {
       "message": "simple:openLog"

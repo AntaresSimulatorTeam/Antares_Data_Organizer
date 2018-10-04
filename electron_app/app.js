@@ -11,8 +11,8 @@ const path = require('path');
 const winston= require('winston');
 const fs = require('fs-plus');
 //Change to relase before delivery
-//const appLevel='debug';
-const appLevel='release';
+const appLevel='debug';
+//const appLevel='release';
 
 let _url2path = base => {
 	return uri => {
@@ -103,9 +103,11 @@ Editor.App.extend({
 		});
 	}
 	var globalPathVar="";
+	var globalChestVar="";
 	global.sharedObj = {loggerActions: loggerActions,
 						logPath:pathLogVar,
 						globalPath: globalPathVar,
+						globalChest: globalChestVar,
 						password: "Antares_Data_Organizer_Password_Format_001",
 						appLevel:appLevel
 						};

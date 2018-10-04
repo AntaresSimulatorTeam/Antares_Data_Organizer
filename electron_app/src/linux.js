@@ -32,3 +32,9 @@ exports.getSevenZip = function(appPath,logger){
 exports.saveStringInTempFile = function(fileName,stringToSave){
 	fs.writeFileSync(path.join("/tmp",fileName), stringToSave);
 }
+
+//checks the icon of a folder defined by desktop.ini
+exports.checkIcon= function (pathChest)
+{
+	//Not supported on linux for now
+}

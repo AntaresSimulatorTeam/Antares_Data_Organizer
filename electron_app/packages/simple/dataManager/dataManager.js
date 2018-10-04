@@ -1695,6 +1695,16 @@ function displayJsonTabFolder(){
 					Editor.Panel.focus('simple.02');
 				}
 			})(i);
+			let indice=i;
+			if(jsonTabFolder.TypePath[i].type=="chest")
+			{
+				nouveau_li.addEventListener("mousedown", event => {
+					if (event.button == 2) {
+						remote.getGlobal('sharedObj').globalChest=jsonTabFolder.TypePath[indice].path;
+						Editor.Ipc.sendToPanel('simple.04','openFromData');
+					}
+				});
+			}
 			var liWarn = document.createElement('li');
 			var warn = document.createTextNode(jsonTabFolder.TypePath[i].type);
 			liWarn.appendChild(warn);
@@ -1781,7 +1791,7 @@ function recursiveSearch(pathFolder, level ){
 		
 		if(isdir){
 			try{
-				var studyPath=isAntaresStudy(subPath);
+				var studyPath=utils.isAntaresStudy(subPath);
 				var folderPath=utils.isAdoFolder(subPath);
 				if( studyPath){
 					var tabTag=utils.readTag(studyPath,loggerActions);
@@ -2083,7 +2093,7 @@ function afficherScat(){
 	if (typeof(JsonLib["libArray"])!="undefined"){
 		for(var i=0; i<JsonLib.libArray.length; i++){
 			if(fs.existsSync(JsonLib.libArray[i])){
-				var result=isAntaresStudy(JsonLib.libArray[i]);
+				var result=utils.isAntaresStudy(JsonLib.libArray[i]);
 				if(result){
 					if(!(result===JsonLib.libArray[i])){
 						JsonLib.libArray[i]=result;
@@ -2349,48 +2359,6 @@ function createLoggerExec(){
 		loggerExec.verbose("The dates are formated to the local timezone. To convert them in UTC, remove " + (-tzoffset/60000) + " minutes");
 	}
 	loggerExec.debug("Debug logs enabled\r\n");
-}
-
-//Look at a path and determine if it is an antares study or not
-function isAntaresStudy(pathFolder){
-	var result=0;
-	var newpath;
-	try{
-		if(fs.isDirectorySync(pathFolder)){
-			var items=fs.readdirSync(pathFolder);
-			if(items.length==1)// If contains only one directory, we check if the directory is a study
-			{
-				var isSubdir=false;
-					newpath=path.join(pathFolder, items[0]);
-					isSubdir=fs.statSync(newpath).isDirectory();
-					/*var itemsInside=fs.readdirSync(newpath);
-					for (var i=0; i<itemsInside.length; i++) {
-						if (itemsInside[i]==="study.antares"){
-							result=newpath;
-						}
-					}*/
-					if(fs.existsSync(path.join(newpath,"study.antares")) && fs.existsSync(path.join(newpath,"input")) && fs.existsSync(path.join(newpath,"settings")) && fs.existsSync(path.join(newpath,"Desktop.ini"))){
-						var fileContent = fs.readFileSync(path.join(newpath,"study.antares"), 'utf8');
-						if(fileContent.includes("author") && fileContent.includes("version") && fileContent.includes("caption") && fileContent.includes("created") &&fileContent.includes("lastsave")){
-							result=newpath;
-						}
-					}
-				
-			}
-			else
-			{
-				if(fs.existsSync(path.join(pathFolder,"study.antares")) && fs.existsSync(path.join(pathFolder,"input")) && fs.existsSync(path.join(pathFolder,"settings")) && fs.existsSync(path.join(pathFolder,"Desktop.ini"))){
-						var fileContent = fs.readFileSync(path.join(pathFolder,"study.antares"), 'utf8');
-						if(fileContent.includes("author") && fileContent.includes("version") && fileContent.includes("caption") && fileContent.includes("created") &&fileContent.includes("lastsave")){
-							result=pathFolder;
-						}
-				}
-			}
-		}
-	}
-	catch(err) {//do nothing
-	}
-	return result;
 }
 
 //get the size of a folder
@@ -3150,11 +3118,6 @@ messages: {
 					var jsonTabTemp=jsonTabFolder;
 					jsonTabFolder = {TypePath:[]};
 					for(var i in jsonTabTemp.TypePath){
-						if(jsonTabTemp.TypePath[i].tag1==tagSelected || jsonTabTemp.TypePath[i].tag2==tagSelected || jsonTabTemp.TypePath[i].tag3==tagSelected){
-							jsonTabFolder.TypePath.push(jsonTabTemp.TypePath[i]);
-						}
-					}
-	Editor.log("d:"+jsonTabFolder.TypePath.length);
 				}
 			}
 			catch(err){

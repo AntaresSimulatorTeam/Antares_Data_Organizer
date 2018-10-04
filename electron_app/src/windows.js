@@ -36,3 +36,78 @@ exports.getSevenZip = function(appPath,logger){
 exports.saveStringInTempFile = function(fileName,stringToSave){
 	fs.writeFileSync(path.join(process.env.TMP,fileName), stringToSave);
 }
+
+//checks the icon of a folder defined by desktop.ini
+exports.checkIcon= function (pathChest)
+{
+	var pathIcon;
+	if(fs.existsSync(path.join(path.dirname(appPath),"resources", "ado.ico"))){
+		pathIcon=path.join(path.dirname(appPath),"resources", "ado.ico");
+	}
+	else if(fs.existsSync(path.join(path.dirname(appPath), "ado.ico"))){
+		pathIcon=path.join(path.dirname(appPath), "ado.ico");
+	}
+	pathIni=path.join(pathChest,"Desktop.ini");
+	if(!fs.isFileSync(pathIni)){
+		fs.writeFileSync(pathIni,"[.shellclassinfo]\nIconResource = "+pathIcon+",0");
+	}
+	else
+	{
+		var pathLine;
+		var classInfoLine=-1;
+		var iconLine=-1;
+		var modif=false;
+		var lines=fs.readFileSync(pathIni, 'utf8').split(/[\r\n]+/);
+		for(var i=0;i<lines.length;i++)
+		{
+			Editor.log(lines[i]);
+			if(lines[i].startsWith("IconResource"))
+			{
+				var pathLine=lines[i].split("=")[1].split(",")[0];
+				iconLine=i;
+				if(!pathLine || !fs.existsSync(pathLine))
+				{
+					lines[i]="IconResource = "+pathIcon+",0";
+					modif=true;
+				}
+				break;
+			}
+			else if(lines[i].startsWith("[.shellclassinfo]")){
+				classInfoLine=i;
+			}
+		}
+		if(iconLine==-1)
+		{
+			modif=true;
+			if(classInfoLine==-1)
+			{
+				lines[0]="[.shellclassinfo]\nIconResource = "+pathIcon+",0\n"+lines[0];
+			}
+			else
+			{
+				lines[classInfoLine]=lines[classInfoLine]+"\nIconResource = "+pathIcon+",0";
+			}
+		}
+		else if(classInfoLine==-1)
+		{
+			modif=true;
+			lines[iconLine]="[.shellclassinfo]\n"+lines[iconLine];
+		}
+		if(modif){
+			var newFile="";
+			for(var i=0;i<lines.length;i++)
+			{
+				newFile=newFile+lines[i]+"\n";
+				fs.writeFileSync(pathIni,newFile);
+			}
+		}
+	}
+	var cmd ='attrib +R +S "'+pathChest+'"';
+	try{
+		execSync(cmd);
+	}
+	catch(err)
+	{
+		//do nothing
+	}
+}

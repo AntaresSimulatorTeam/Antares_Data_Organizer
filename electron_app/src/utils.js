@@ -49,6 +49,48 @@ exports.isAdoFolder = function(pathFolder){
 	return result;
 }
 
+//Look at a path and determine if it is an antares study or not
+exports.isAntaresStudy = function(pathFolder){
+	var result=0;
+	var newpath;
+	try{
+		if(fs.isDirectorySync(pathFolder)){
+			var items=fs.readdirSync(pathFolder);
+			if(items.length==1)// If contains only one directory, we check if the directory is a study
+			{
+				var isSubdir=false;
+					newpath=path.join(pathFolder, items[0]);
+					isSubdir=fs.statSync(newpath).isDirectory();
+					/*var itemsInside=fs.readdirSync(newpath);
+					for (var i=0; i<itemsInside.length; i++) {
+						if (itemsInside[i]==="study.antares"){
+							result=newpath;
+						}
+					}*/
+					if(fs.existsSync(path.join(newpath,"study.antares")) && fs.existsSync(path.join(newpath,"input")) && fs.existsSync(path.join(newpath,"settings")) && fs.existsSync(path.join(newpath,"Desktop.ini"))){
+						var fileContent = fs.readFileSync(path.join(newpath,"study.antares"), 'utf8');
+						if(fileContent.includes("author") && fileContent.includes("version") && fileContent.includes("caption") && fileContent.includes("created") &&fileContent.includes("lastsave")){
+							result=newpath;
+						}
+					}
+				
+			}
+			else
+			{
+				if(fs.existsSync(path.join(pathFolder,"study.antares")) && fs.existsSync(path.join(pathFolder,"input")) && fs.existsSync(path.join(pathFolder,"settings")) && fs.existsSync(path.join(pathFolder,"Desktop.ini"))){
+						var fileContent = fs.readFileSync(path.join(pathFolder,"study.antares"), 'utf8');
+						if(fileContent.includes("author") && fileContent.includes("version") && fileContent.includes("caption") && fileContent.includes("created") &&fileContent.includes("lastsave")){
+							result=pathFolder;
+						}
+				}
+			}
+		}
+	}
+	catch(err) {//do nothing
+	}
+	return result;
+}
+
 
 //get hash from folder
 exports.getHashStudy = function(studyPath,logger){
