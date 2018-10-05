@@ -1860,11 +1860,11 @@ function recursiveSearch(pathFolder, level ){
 }
 
 //Adds a line in arrayCheck with the informations from arrayIsActivated
-function addCheckArray(arrayCheck, arrayIsActivated){
+function addCheckArray(arrayCheck, arrayIsActivated,indiceLine){
 	if(arrayIsActivated.length==arrayCheck.length){
 		for (var indiceCheck = 0; indiceCheck < arrayCheck.length; indiceCheck++) {
 			if(arrayIsActivated[indiceCheck]){
-				addCheckBox(arrayCheck[indiceCheck]);
+				addCheckBox(arrayCheck[indiceCheck],arrayCheck,indiceCheck,indiceLine);
 			}
 			else{
 				addDisabledCheckBox(arrayCheck[indiceCheck]);
@@ -1955,26 +1955,26 @@ function refreshBoxes(){
 				document.getElementById('simple.03').shadowRoot.getElementById('destFolderCheck').checked,//copy
 				jsonTabFolder.TypePath[i].type=="study" || jsonTabFolder.TypePath[i].type=="chest",//archive
 				jsonTabFolder.TypePath[i].type=="archive" || jsonTabFolder.TypePath[i].type=="pack",//expand
-				1]);//delete
+				1],i);//delete
 		}
 	}
 	if(typePath=="scat"){
 		for(var i=0; i<jsonTabFolder.TypePath.length; i++){
 			if(fs.existsSync(jsonTabFolder.TypePath[i].path)){
-				addCheckArray(arrayCheck,[1,document.getElementById('simple.03').shadowRoot.getElementById('destScatCheck').checked,1,jsonTabFolder.TypePath[i].type=="study",document.getElementById('simple.03').shadowRoot.getElementById('destFolderCheck').checked/*copy*/,1,0,1]);
+				addCheckArray(arrayCheck,[1,document.getElementById('simple.03').shadowRoot.getElementById('destScatCheck').checked,1,jsonTabFolder.TypePath[i].type=="study",document.getElementById('simple.03').shadowRoot.getElementById('destFolderCheck').checked/*copy*/,1,0,1],i);
 			}
 			else{
-				addCheckArray(arrayCheck,[0,0,1,0,0,0,0,0]);
+				addCheckArray(arrayCheck,[0,0,1,0,0,0,0,0],i);
 			}
 		}
 	}
 	if(typePath=="acat"){
 		for(var i=0; i<jsonTabFolder.TypePath.length; i++){
 			if(fs.existsSync(jsonTabFolder.TypePath[i].path)){
-				addCheckArray(arrayCheck,[1,document.getElementById('simple.03').shadowRoot.getElementById('destAcatCheck').checked,1,0,document.getElementById('simple.03').shadowRoot.getElementById('destFolderCheck').checked/*copy*/,0,1,1]);
+				addCheckArray(arrayCheck,[1,document.getElementById('simple.03').shadowRoot.getElementById('destAcatCheck').checked,1,0,document.getElementById('simple.03').shadowRoot.getElementById('destFolderCheck').checked/*copy*/,0,1,1],i);
 			}
 			else{
-				addCheckArray(arrayCheck,[0,0,1,0,0,0,0,0]);
+				addCheckArray(arrayCheck,[0,0,1,0,0,0,0,0],i);
 			}
 		}
 	}
@@ -2290,12 +2290,59 @@ function getTypePath(){
 }
 
 //Creates checkable checkbox in the provided list
-function addCheckBox(list){
+function addCheckBox(list,arrayCheck,indiceColumn, indiceLine){
 	var liCheck = document.createElement('li');
 	var cb = document.createElement('input');
 	cb.type = 'checkbox';
+	cb.addEventListener("mousedown", event => {
+		if (event.shiftKey)
+		{
+			checkBoxesMaj(arrayCheck,indiceColumn,indiceLine);
+		}
+	});
 	liCheck.appendChild(cb);
 	list.appendChild(liCheck);
+}
+
+//Checks the boxes at maj + click
+function checkBoxesMaj(arrayCheck,indiceColumn,indiceLine)
+{
+	var ind=-1;
+	for(var indiceL=indiceLine-1;indiceL>-1;indiceL--)
+	{
+		if(arrayCheck[indiceColumn].children[indiceL].firstChild.checked)
+		{
+			ind=indiceL;
+			break;
+		}
+	}
+	if(ind==-1)
+	{
+		for(var indiceL=indiceLine+1;indiceL<arrayCheck[indiceColumn].childElementCount;indiceL++)
+		{
+			if(arrayCheck[indiceColumn].children[indiceL].firstChild.checked)
+			{
+				ind=indiceL;
+				break;
+			}
+		}
+	}
+	if(ind !=-1)
+	{
+		var min=Math.min(ind,indiceLine);
+		if(min == indiceLine)
+		{
+			min++;
+		}
+		var max=Math.max(ind,indiceLine);
+		for(var indiceL=min;indiceL<max;indiceL++)
+		{
+			if(!arrayCheck[indiceColumn].children[indiceL].firstChild.disabled)
+			{
+				arrayCheck[indiceColumn].children[indiceL].firstChild.checked=true;
+			}
+		}
+	}
 }
 
 //Add a title to the list
@@ -3117,7 +3164,13 @@ messages: {
 				if(tagSelected){
 					var jsonTabTemp=jsonTabFolder;
 					jsonTabFolder = {TypePath:[]};
-					for(var i in jsonTabTemp.TypePath){
+					for(var i in jsonTabTemp.TypePath)
+					{
+						if(jsonTabTemp.TypePath[i].tag1==tagSelected || jsonTabTemp.TypePath[i].tag2==tagSelected || jsonTabTemp.TypePath[i].tag3==tagSelected)
+						{
+							jsonTabFolder.TypePath.push(jsonTabTemp.TypePath[i]);
+						}
+					}
 				}
 			}
 			catch(err){
