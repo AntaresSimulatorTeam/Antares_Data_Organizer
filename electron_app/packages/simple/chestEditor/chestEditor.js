@@ -53,13 +53,13 @@ function afficher(){
 		var buttonModif=document.getElementById('simple.04').shadowRoot.getElementById('modify');
 		pathF.textContent= pathChest;
 		if(utils.isAntaresStudy(pathChest)){//It's a study
-			descr.textContent= "This is already an Antares study, it cannot be used as a chest.";
+			descr.textContent= "This folder is an Antares study, it cannot be used as a chest.";
 			textZ.disabled=true;
 			buttonCreate.disabled=true;
 			buttonModif.disabled=true;
 		}
 		else if(utils.isAdoFolder(pathChest)){//it's already a chest
-			descr.textContent= "This is already a chest, you can modify its comments.";
+			descr.textContent= "This is already a chest, you can update its comments.";
 			textZ.disabled=false;
 			buttonCreate.disabled=true;
 			buttonModif.disabled=false;
@@ -71,7 +71,7 @@ function afficher(){
 			os.checkIcon(pathChest);
 		}
 		else if(fs.isDirectorySync(pathChest)){//it's a normal folder
-			descr.textContent= "This is a compatible folder, you can create a chest here.";
+			descr.textContent= "This folder is not a chest yet, you can create one here.";
 			textZ.disabled=false;
 			buttonCreate.disabled=false;
 			buttonModif.disabled=true;
@@ -142,7 +142,7 @@ template: `
 	<style> @import "./general.css"; </style>
 	<div style="width=100%;height:100%;" id="maindiv">
 		<div id="display">
-			<h2>Open <u onClick="Editor.Ipc.sendToPanel('simple.04','openChest')">folder</u> :</h2>
+			<h2>Choose target <u onClick="Editor.Ipc.sendToPanel('simple.04','openChest')">folder</u> :</h2>
 			<p id="pathfolder">Undefined</p>
 		</div>
 		<p id="desc">No folder selected.</p>
@@ -152,7 +152,7 @@ template: `
 		</div>
 		<div id ="buttons">
 			<button type="button" id="create" disabled title="Create a new chest with these comments" onClick="Editor.Ipc.sendToPanel('simple.04','create')">Create</button>
-			<button type="button" id="modify" disabled title="Updtae chest with these comments" onClick="Editor.Ipc.sendToPanel('simple.04','modify')">Modify</button>
+			<button type="button" id="modify" disabled title="Update chest with these comments" onClick="Editor.Ipc.sendToPanel('simple.04','modify')">Update</button>
 		</div>
 	</div>
 	`,

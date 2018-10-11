@@ -33,7 +33,7 @@
   "panel.04": {
     "main": "chestEditor/chestEditor.js",
     "type": "dockable",
-    "title": "Chest Manager",
+    "title": "Chest Editor",
     "width": 1000,
     "height": 300,
 	"min-width": 1000,

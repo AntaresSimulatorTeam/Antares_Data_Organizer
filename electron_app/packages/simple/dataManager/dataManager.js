@@ -3025,6 +3025,17 @@ style: `
 	input[type=range]:focus::-ms-fill-upper {
 	  background: #ffffff;
 	}
+	#slideValue{
+		height:17px;
+		background: #ffffff;
+		width:18px;
+		text-align:center;
+		position:absolute;
+		right:130px;
+		top : 55px;
+		visibility:hidden;
+		color:black;
+	}
 
 	`,
 
@@ -3041,6 +3052,7 @@ template: `
 		<input type="radio" name="ratio" value="speed" checked>Speed
 		<input type="radio" name="ratio" value="comp">Compression Ratio
 	</form></p>
+	<div id="slideValue">10</div>
 	<div id="slidecontainer">
 		<p>Research depth : 0 <input type="range" min="0" max="50" value="10" id="rDepth" onchange="Editor.Ipc.sendToPanel('simple.03','changeDepth')"> 50</p>
 	</div>
@@ -3119,6 +3131,14 @@ listeners: {
 messages: {
 		changeDepth(){
 			researchDepth=document.getElementById('simple.03').shadowRoot.getElementById('rDepth').value;
+			var displayDepth=document.getElementById('simple.03').shadowRoot.getElementById('slideValue');
+			displayDepth.textContent=researchDepth;
+			displayDepth.style.right=16+Math.round((50-researchDepth)*2.86)+"px";
+			displayDepth.style.visibility="visible";
+			setTimeout(function() {
+				var displayDepth=document.getElementById('simple.03').shadowRoot.getElementById('slideValue');
+				displayDepth.style.visibility="hidden";
+			},2000);
 		},
 		changeType(){
 			var radioButtons=document.getElementById('simple.03').shadowRoot.getElementById('selectType');
