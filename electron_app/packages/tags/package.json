@@ -1,0 +1,96 @@
+{
+  "name": "tabs",
+  "version": "2.0.0",
+  "description": "Simple Package",
+  "main": "main.js",
+  "author": {
+    "name": "Sylvain Marandon"
+  },
+  "license" : "GPL-3.0",
+  "panel.01": {
+    "main": "catalogManager/catalogManager.js",
+    "type": "dockable",
+    "title": "Catalog manager",
+    "width": 750,
+    "height": 330,
+	"min-width": 750,
+	"min-height":330
+  },
+  "panel.02": {
+    "main": "dataBrowser/dataBrowser.js",
+    "type": "dockable",
+    "title": "Data Browser",
+    "width": 400,
+    "height": 400,
+	"min-width": 750,
+	"min-height":425
+  },
+  "panel.03": {
+    "main": "dataManager/dataManager.js",
+    "type": "dockable",
+    "title": "Data Manager",
+    "width": 1000,
+    "height": 300,
+	"min-width": 1000,
+	"min-height":250
+  },
+  "panel.04": {
+    "main": "chestEditor/chestEditor.js",
+    "type": "dockable",
+    "title": "Chest Editor",
+    "width": 1000,
+    "height": 300,
+	"min-width": 1000,
+	"min-height":250
+  },
+    "main-menu": {
+    "Panel/Catalog manager": {
+      "message": "tabs:open1"
+    },
+	"Panel/Data Browser": {
+      "message": "tabs:open2"
+    },
+	"Panel/Data Manager": {
+      "message": "tabs:open3"
+    },
+	"Panel/Chest Editor": {
+      "message": "tabs:open4"
+    },
+	"Origin/Open Portfolio": {
+      "message": "tabs:openMainFolder"
+    },
+	"Origin/Open Catalog": {
+      "message": "tabs:openlib"
+    },
+	"Destination/Open Portfolio": {
+      "message": "tabs:openFolder"
+    },
+	"Destination/Open Study Catalog": {
+      "message": "tabs:openScat"
+    },
+	"Destination/Open Archive Catalog": {
+      "message": "tabs:openAcat"
+    },
+	"Source/Open Source": {
+      "message": "tabs:openSource"
+    },
+	"Sink/Open Sink": {
+      "message": "tabs:openSink"
+    },
+	"Chest/Open chest": {
+      "message": "tabs:openChest"
+    },
+	"Log/Open current log": {
+      "message": "tabs:openLog"
+    },
+	"Log/Open log folder": {
+      "message": "tabs:openLogFolder"
+    },
+	"?/Open reference guide": {
+      "message": "tabs:openHelp"
+    },
+	"?/Open troubleshooting notes": {
+      "message": "tabs:openTrouble"
+    }
+  }
+}

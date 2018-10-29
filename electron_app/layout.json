@@ -9,10 +9,10 @@
                 "active": 0,
                 "height": 319.5,
                 "panels": [
-				  "simple.04",
-                  "simple.03",
-				  "simple.02",
-				  "simple.01"
+				  "tabs.04",
+                  "tabs.03",
+				  "tabs.02",
+				  "tabs.01"
                 ],
                 "type": "panel",
                 "width": 440.5
