@@ -1351,10 +1351,10 @@ function addShowFolder(pathFolder){
 			metrics+="\r\n\r\n";
 			if(!fs.existsSync(showFile)){
 				if(path.parse(pathMain).ext==".scat"){
-					fs.appendFileSync(showFile, "[OrigSCat]"+ pathMain +"\r\n\r\n");
+					fs.appendFileSync(showFile, "Antares_Data_Organizer 2.0.0 Copyright RTE 2007-2018 . Antares_Data_Organizer  is  free sofware released under the terms of the GNU General Public License Version 3\r\n\r\n[OrigSCat]"+ pathMain +"\r\n\r\n");
 				}
 				else{
-					fs.appendFileSync(showFile, "[OrigPort]"+ pathMain +"\r\n\r\n");
+					fs.appendFileSync(showFile, "Antares_Data_Organizer 2.0.0 Copyright RTE 2007-2018 . Antares_Data_Organizer  is  free sofware released under the terms of the GNU General Public License Version 3\r\n\r\n[OrigPort]"+ pathMain +"\r\n\r\n");
 				}
 			}
 			fs.appendFileSync(showFile, metrics);
@@ -1423,10 +1423,10 @@ function addShowStudy(pathStudy){
 			metrics+="\r\n\r\n";
 			if(!fs.existsSync(showFile)){
 				if(path.parse(pathMain).ext==".scat"){
-					fs.appendFileSync(showFile, "[OrigSCat]"+ pathMain +"\r\n\r\n");
+					fs.appendFileSync(showFile, "Antares_Data_Organizer 2.0.0 Copyright RTE 2007-2018 . Antares_Data_Organizer  is  free sofware released under the terms of the GNU General Public License Version 3\r\n\r\n[OrigSCat]"+ pathMain +"\r\n\r\n");
 				}
 				else{
-					fs.appendFileSync(showFile, "[OrigPort]"+ pathMain +"\r\n\r\n");
+					fs.appendFileSync(showFile, "Antares_Data_Organizer 2.0.0 Copyright RTE 2007-2018 . Antares_Data_Organizer  is  free sofware released under the terms of the GNU General Public License Version 3\r\n\r\n[OrigPort]"+ pathMain +"\r\n\r\n");
 				}
 			}
 			fs.appendFileSync(showFile, metrics);
@@ -1481,10 +1481,10 @@ function addShowArchive(pathArchive){
 			metrics+="\r\n\r\n";
 			if(!fs.existsSync(showFile)){
 				if(path.parse(pathMain).ext==".acat"){
-					fs.appendFileSync(showFile, "[OrigAcat]"+ pathMain +"\r\n\r\n");
+					fs.appendFileSync(showFile, "Antares_Data_Organizer 2.0.0 Copyright RTE 2007-2018 . Antares_Data_Organizer  is  free sofware released under the terms of the GNU General Public License Version 3\r\n\r\n[OrigAcat]"+ pathMain +"\r\n\r\n");
 				}
 				else{
-					fs.appendFileSync(showFile, "[OrigPort]"+ pathMain +"\r\n\r\n");
+					fs.appendFileSync(showFile, "Antares_Data_Organizer 2.0.0 Copyright RTE 2007-2018 . Antares_Data_Organizer  is  free sofware released under the terms of the GNU General Public License Version 3\r\n\r\n[OrigPort]"+ pathMain +"\r\n\r\n");
 				}
 			}
 			fs.appendFileSync(showFile, metrics);
@@ -1530,10 +1530,10 @@ function addShowAblob(pathArchive){
 			metrics+="\r\n\r\n";
 			if(!fs.existsSync(showFile)){
 				if(path.parse(pathMain).ext==".acat"){
-					fs.appendFileSync(showFile, "[OrigAcat]"+ pathMain +"\r\n\r\n");
+					fs.appendFileSync(showFile, "Antares_Data_Organizer 2.0.0 Copyright RTE 2007-2018 . Antares_Data_Organizer  is  free sofware released under the terms of the GNU General Public License Version 3\r\n\r\n[OrigAcat]"+ pathMain +"\r\n\r\n");
 				}
 				else{
-					fs.appendFileSync(showFile, "[OrigPort]"+ pathMain +"\r\n\r\n");
+					fs.appendFileSync(showFile, "Antares_Data_Organizer 2.0.0 Copyright RTE 2007-2018 . Antares_Data_Organizer  is  free sofware released under the terms of the GNU General Public License Version 3\r\n\r\n[OrigPort]"+ pathMain +"\r\n\r\n");
 				}
 			}
 			fs.appendFileSync(showFile, metrics);
@@ -2400,10 +2400,10 @@ function createLoggerExec(){
 		});
 	}
 	if(tzoffset>0){
-		loggerExec.verbose("The dates are formated to the local timezone. To convert them to UTC, add " + tzoffset/60000 + " minutes");
+		loggerExec.verbose("Antares_Data_Organizer 2.0.0 Copyright RTE 2007-2018 . Antares_Data_Organizer  is  free sofware released under the terms of the GNU General Public License Version 3\r\n\r\nThe dates are formated to the local timezone. To convert them to UTC, add " + tzoffset/60000 + " minutes");
 	}
 	else{
-		loggerExec.verbose("The dates are formated to the local timezone. To convert them in UTC, remove " + (-tzoffset/60000) + " minutes");
+		loggerExec.verbose("Antares_Data_Organizer 2.0.0 Copyright RTE 2007-2018 . Antares_Data_Organizer  is  free sofware released under the terms of the GNU General Public License Version 3\r\n\r\nThe dates are formated to the local timezone. To convert them in UTC, remove " + (-tzoffset/60000) + " minutes");
 	}
 	loggerExec.debug("Debug logs enabled\r\n");
 }

@@ -51,18 +51,22 @@ function afficher(){
 		var textZ=document.getElementById('tabs.04').shadowRoot.getElementById('comments');
 		var buttonCreate=document.getElementById('tabs.04').shadowRoot.getElementById('create');
 		var buttonModif=document.getElementById('tabs.04').shadowRoot.getElementById('modify');
+		var buttonDelete=document.getElementById('tabs.04').shadowRoot.getElementById('delete');
 		pathF.textContent= pathChest;
+		textZ.value="";
 		if(utils.isAntaresStudy(pathChest)){//It's a study
 			descr.textContent= "This folder is an Antares study, it cannot be used as a chest.";
 			textZ.disabled=true;
 			buttonCreate.disabled=true;
 			buttonModif.disabled=true;
+			buttonDelete.disabled=true;
 		}
 		else if(utils.isAdoFolder(pathChest)){//it's already a chest
 			descr.textContent= "This is already a chest, you can update its comments.";
 			textZ.disabled=false;
 			buttonCreate.disabled=true;
 			buttonModif.disabled=false;
+			buttonDelete.disabled=false;
 			var commentsPath=path.join(pathChest,"info.ado");
 			if(fs.existsSync(commentsPath)){
 				var lines=fs.readFileSync(commentsPath, 'utf8');
@@ -75,12 +79,14 @@ function afficher(){
 			textZ.disabled=false;
 			buttonCreate.disabled=false;
 			buttonModif.disabled=true;
+			buttonDelete.disabled=true;
 		}
 		else{//there is a problem
 			descr.textContent= "This is not a compatible path. Please select another one.";
 			textZ.disabled=true;
 			buttonCreate.disabled=true;
 			buttonModif.disabled=true;
+			buttonDelete.disabled=true;
 		}
 	}
 }
@@ -153,6 +159,7 @@ template: `
 		<div id ="buttons">
 			<button type="button" id="create" disabled title="Create a new chest with these comments" onClick="Editor.Ipc.sendToPanel('tabs.04','create')">Create</button>
 			<button type="button" id="modify" disabled title="Update chest with these comments" onClick="Editor.Ipc.sendToPanel('tabs.04','modify')">Update</button>
+			<button type="button" id="delete" disabled title="Turn this chest into a regular folder" onClick="Editor.Ipc.sendToPanel('tabs.04','deleteChest')">Turn back</button>
 		</div>
 	</div>
 	`,
@@ -186,6 +193,23 @@ messages: {
 				fs.writeFileSync(path.join(pathChest,"info.ado"),document.getElementById('tabs.04').shadowRoot.getElementById('comments').value);
 				os.checkIcon(pathChest);
 				afficher();
+			}
+			else
+			{
+				window.alert("Invalid target, please select another folder");
+			}
+		},
+		deleteChest(){
+			if(fs.isDirectorySync(pathChest)&& utils.isAdoFolder(pathChest))
+			{
+				try{
+					fs.unlink(path.join(pathChest,"info.ado"));
+					os.delIcon(pathChest);
+					afficher();
+				}
+				catch(err){
+					//do nothing
+				}
 			}
 			else
 			{

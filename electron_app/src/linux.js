@@ -38,3 +38,9 @@ exports.checkIcon= function (pathChest)
 {
 	//Not supported on linux for now
 }
+
+//deletes the icon of a folder defined by desktop.ini
+exports.delIcon= function (pathChest)
+{
+	//Not supported on linux for now
+}

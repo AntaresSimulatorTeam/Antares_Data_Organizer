@@ -60,7 +60,6 @@ exports.checkIcon= function (pathChest)
 		var lines=fs.readFileSync(pathIni, 'utf8').split(/[\r\n]+/);
 		for(var i=0;i<lines.length;i++)
 		{
-			Editor.log(lines[i]);
 			if(lines[i].startsWith("IconResource"))
 			{
 				var pathLine=lines[i].split("=")[1].split(",")[0];
@@ -72,7 +71,8 @@ exports.checkIcon= function (pathChest)
 				}
 				break;
 			}
-			else if(lines[i].startsWith("[.shellclassinfo]")){
+			else if(lines[i].startsWith("[.shellclassinfo]"))
+			{
 				classInfoLine=i;
 			}
 		}
@@ -98,7 +98,13 @@ exports.checkIcon= function (pathChest)
 			for(var i=0;i<lines.length;i++)
 			{
 				newFile=newFile+lines[i]+"\n";
-				fs.writeFileSync(pathIni,newFile);
+				try{
+					fs.writeFileSync(pathIni,newFile);
+				}
+				catch(err)
+				{
+					//do nothing
+				}
 			}
 		}
 	}
@@ -109,5 +115,49 @@ exports.checkIcon= function (pathChest)
 	catch(err)
 	{
 		//do nothing
+	}
+}
+
+//deletes the icon of a folder defined by desktop.ini
+exports.delIcon= function (pathChest)
+{
+	pathIni=path.join(pathChest,"Desktop.ini");
+	if(fs.isFileSync(pathIni)){
+		var modif=false;
+		var lines=fs.readFileSync(pathIni, 'utf8').split(/[\r\n]+/);
+		if(lines.length==3)
+		{
+			try{
+				fs.unlinkSync(pathIni);
+			}
+			catch(err)
+			{
+				//do nothing
+			}
+		}
+		else
+		{
+			var newFile="";
+			for(var i=0;i<lines.length;i++)
+			{
+				if(!lines[i].startsWith("IconResource"))
+				{
+					newFile=newFile+lines[i]+"\n";
+				}
+				else{
+					modif=true;
+				}
+			}
+			if(modif==true)
+			{
+				try{
+					fs.writeFileSync(pathIni,newFile);
+				}
+				catch(err)
+				{
+					//do nothing
+				}
+			}
+		}
 	}
 }
