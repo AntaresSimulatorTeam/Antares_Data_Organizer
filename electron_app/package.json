@@ -21,6 +21,7 @@
     "repeat-string": "^1.6.1",
     "wrap-ansi": "^3.0.1",
     "md5-dir": "^3.0.1",
-	"coveralls": "^3.0.0"
+	"coveralls": "^3.0.0",
+	"sweetalert2": "^7.28.12"
   }
 }
