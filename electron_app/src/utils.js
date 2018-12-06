@@ -55,7 +55,7 @@ var _this = this;
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 //Look at a path and determine if it is a compatible folder or not
-exports.isAdoFolder = function(pathFolder){
+exports.isChest = function(pathFolder){
 	var result=0;
 	var newpath;
 	try{
@@ -118,11 +118,17 @@ exports.isAntaresStudy = function(pathFolder){
 exports.getHashStudy = function(studyPath,logger){
 	try{
 		if(fs.isDirectorySync(studyPath)){
+			var t1= new Date();
 			var hashed = hashSync.dir(studyPath).hash;
+			var t2 = new Date();
+			logger.info("Hash : " + hashed + " . It took : " + timeDiff(t1,t2));
 			return hashed;
 		}
 		else{
+			var t1= new Date();
 			var hashed = hashSync.file(studyPath);
+			var t2 = new Date();
+			logger.info("Hash : " + hashed + " . It took : " + timeDiff(t1,t2));
 			return hashed;
 		}
 	}
@@ -360,7 +366,7 @@ exports.isArchive = function(pathArchive){
 }
 
 //checks if a path is an antpack
-exports.isAblob = function(pathArchive){
+exports.isAntpack = function(pathArchive){
 	if(path.extname(pathArchive)==='.antpack'){
 		try{
 			fs.statSync(pathArchive);
@@ -500,4 +506,18 @@ exports.getLinesFromXml = function(stringFile){
                .replace(/&apos;/g, '\'');
 }
 
+function timeDiff( tstart, tend ) {
+  var diff = Math.floor((tend - tstart) / 1000), units = [
+    { d: 60, l: "seconds" },
+    { d: 60, l: "minutes" },
+    { d: 24, l: "hours" },
+    { d: 7, l: "days" }
+  ];
 
+  var s = '';
+  for (var i = 0; i < units.length; ++i) {
+    s = (diff % units[i].d) + " " + units[i].l + " " + s;
+    diff = Math.floor(diff / units[i].d);
+  }
+  return s;
+}

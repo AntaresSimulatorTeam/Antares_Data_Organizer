@@ -83,7 +83,7 @@ function afficher(){
 			buttonModif.disabled=true;
 			buttonDelete.disabled=true;
 		}
-		else if(utils.isAdoFolder(pathChest)){//it's already a chest
+		else if(utils.isChest(pathChest)){//it's already a chest
 			descr.textContent= "This is already a chest, you can update its comments.";
 			textZ.disabled=false;
 			buttonCreate.disabled=true;
@@ -179,9 +179,9 @@ template: `
 			<textarea disabled id="comments"></textarea>
 		</div>
 		<div id ="buttons">
-			<button type="button" id="create" disabled title="Create a new chest with these comments" onClick="Editor.Ipc.sendToPanel('tabs.04','create')">Create</button>
+			<button type="button" id="create" disabled title="Create a new chest with these comments" onClick="Editor.Ipc.sendToPanel('tabs.04','create')">Make</button>
 			<button type="button" id="modify" disabled title="Update chest with these comments" onClick="Editor.Ipc.sendToPanel('tabs.04','modify')">Update</button>
-			<button type="button" id="delete" disabled title="Turn this chest into a regular folder" onClick="Editor.Ipc.sendToPanel('tabs.04','deleteChest')">Turn back</button>
+			<button type="button" id="delete" disabled title="Turn this chest into a regular folder" onClick="Editor.Ipc.sendToPanel('tabs.04','deleteChest')">Unmake</button>
 		</div>
 	</div>
 	`,
@@ -199,7 +199,7 @@ messages: {
 			}
 		},
 		modify(){
-			if(utils.isAdoFolder(pathChest))
+			if(utils.isChest(pathChest))
 			{
 				fs.writeFileSync(path.join(pathChest,"info.ado"),document.getElementById('tabs.04').shadowRoot.getElementById('comments').value);
 				afficher();
@@ -210,7 +210,7 @@ messages: {
 			}
 		},
 		create(){
-			if(fs.isDirectorySync(pathChest)&& !utils.isAdoFolder(pathChest))
+			if(fs.isDirectorySync(pathChest)&& !utils.isChest(pathChest))
 			{
 				fs.writeFileSync(path.join(pathChest,"info.ado"),document.getElementById('tabs.04').shadowRoot.getElementById('comments').value);
 				os.checkIcon(pathChest);
@@ -222,7 +222,7 @@ messages: {
 			}
 		},
 		deleteChest(){
-			if(fs.isDirectorySync(pathChest)&& utils.isAdoFolder(pathChest))
+			if(fs.isDirectorySync(pathChest)&& utils.isChest(pathChest))
 			{
 				try{
 					fs.unlink(path.join(pathChest,"info.ado"));

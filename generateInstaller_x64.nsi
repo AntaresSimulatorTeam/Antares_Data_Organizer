@@ -32,7 +32,7 @@ RequestExecutionLevel Highest
 
 
 !define APPNAME "Antares Data Organizer"
-!define VERSIONNUMBER "1.1"
+!define VERSIONNUMBER "2.0.0"
 
 # set the name of the installer
 Outfile "AntaresDataOrganizerInstallerV${VERSIONNUMBER}-x64.exe"

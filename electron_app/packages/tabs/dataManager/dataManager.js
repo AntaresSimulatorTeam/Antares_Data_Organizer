@@ -61,7 +61,7 @@ const exec = require('child_process').exec;
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 const appPath= app.getAppPath();
-var pathMain=""; // Path to scat, acat or portfolio to be opened
+var pathMain=""; // Path to scat, acat, study, chest, archive, pack or portfolio to be opened
 var destFolder=""; //path to the destination folder
 var destScat=""; //path to the destination study catalog
 var destAcat=""; //path to the destination archive catalog
@@ -103,7 +103,8 @@ var args = remote.process.argv;
 const archiveOptSpeed=" -mx1 -t7z -mhe ";
 const archiveOptSize=" -mx9 -t7z -mhe -mmt=on ";
 var archiveOpt=archiveOptSpeed;
-var displaySize=true;
+var displaySize=false;
+var computeHash=true;
 
 //Getting the arguments and checking if there is any instruction for this pannel
 if(args.length>1){
@@ -118,6 +119,24 @@ if(args.length>1){
 	}
 	if(args[args.length-2]=="-c"){
 		if(isValidLib(args[args.length-1])){
+			pathMain=args[args.length-1];
+			setTimeout(function() {
+				afficher();
+				Editor.Panel.focus('tabs.03');
+			},100);
+		}
+	}
+	if(args[args.length-2]=="-s"){
+		if(fs.existsSync(args[args.length-1])){
+			pathMain=args[args.length-1];
+			setTimeout(function() {
+				afficher();
+				Editor.Panel.focus('tabs.03');
+			},100);
+		}
+	}
+	if(args[args.length-2]=="-a"){
+		if(fs.existsSync(args[args.length-1])){
 			pathMain=args[args.length-1];
 			setTimeout(function() {
 				afficher();
@@ -903,12 +922,19 @@ function deleteFileIfExists(filePath){
 
 //Archives a study on destfolder or on site
 function archiveStudy(pathStudy){
-	var hash=utils.getHashStudy(pathStudy,loggerExec);
-	if(hash=="error"){
-		loggerExec.error(pathStudy + " has not been archived due to a hash problem");
-		nbErrorMain++;
-		return 1;
+	var hash="N.A.";
+	if(computeHash){
+		hash=utils.getHashStudy(pathStudy,loggerExec);
+		if(hash=="error"){
+			loggerExec.error(pathStudy + " has not been archived due to a hash problem");
+			nbErrorMain++;
+			return 1;
+		}
 	}
+	else{
+		loggerExec.info("Signature for " + pathStudy + " was not set to be computed.");
+	}
+	
 	var studyName=path.parse(pathStudy).base;
 	var destinationPath;
 	if(destFolder && document.getElementById('tabs.03').shadowRoot.getElementById('destFolderCheck').checked){ 
@@ -1063,11 +1089,17 @@ function archiveStudy(pathStudy){
 
 //Archives a chest on destfolder or on site
 function archiveFolder(pathStudy){
-	var hash=utils.getHashStudy(pathStudy,loggerExec);
-	if(hash=="error"){
-		loggerExec.error(pathStudy + " has not been archived due to a hash problem");
-		nbErrorMain++;
-		return 1;
+	var hash="N.A.";
+	if(computeHash){
+		hash=utils.getHashStudy(pathStudy,loggerExec);
+		if(hash=="error"){
+			loggerExec.error(pathStudy + " has not been archived due to a hash problem");
+			nbErrorMain++;
+			return 1;
+		}
+	}
+	else{
+		loggerExec.info("Signature for " + pathStudy + " was not set to be computed.");
 	}
 	var studyName=path.parse(pathStudy).base;
 	var destinationPath;
@@ -1357,8 +1389,15 @@ function addShowFolder(pathFolder){
 		try{
 			var metrics="[I-Identi]\r\n[itemType]chest\r\n[ExtrName]"+  path.parse(pathFolder).base
 			+ "\r\n[Location]"+ path.parse(pathFolder).dir
-			+ "\r\n[StdyHash]"+ utils.getHashStudy(pathFolder,loggerExec)
-			+ "\r\n[LastSave]"+ utils.toJSONLocal(fs.statSync(pathFolder).mtime);
+			+ "\r\n[StdyHash]";
+			if(computeHash){
+				metrics+= utils.getHashStudy(pathFolder,loggerExec);
+			}
+			else{
+				metrics+= "N.A.";
+				loggerExec.info("The signature was not set to be computed.");
+			}
+			metrics+="\r\n[LastSave]"+ utils.toJSONLocal(fs.statSync(pathFolder).mtime);
 			metrics+="\r\n[II-Mtrcs]";
 			if(fs.existsSync(pathFolder) && fs.statSync(pathFolder).isDirectory()){
 						metrics+="\r\n[TotlSize]"+getFolderSizeSync(pathFolder);
@@ -1411,8 +1450,15 @@ function addShowStudy(pathStudy){
 			var metrics="[I-Identi]\r\n[itemType]Study\r\n[ExtrName]"+  path.parse(pathStudy).base
 			+ "\r\n[IntrName]"+ readName(pathStudy)
 			+ "\r\n[Location]"+ path.parse(pathStudy).dir
-			+ "\r\n[StdyHash]"+ utils.getHashStudy(pathStudy,loggerExec)
-			+ "\r\n[VersionN]"+ utils.readVersion(pathStudy)
+			+ "\r\n[StdyHash]";
+			if(computeHash){
+				metrics+= utils.getHashStudy(pathStudy,loggerExec);
+			}
+			else{
+				metrics+= "N.A.";
+				loggerExec.info("The signature was not set to be computed.");
+			}
+			metrics+= "\r\n[VersionN]"+ utils.readVersion(pathStudy)
 			+ "\r\n[LastSave]"+ readModifDate(pathStudy);
 			for(var i =0; i<tabTag.length;i++){
 				if(i<9){
@@ -1484,8 +1530,15 @@ function addShowArchive(pathArchive){
 			+ "\r\n[IntrName]"+ utils.getMetaFromAntar(pathArchive,"IntrName",password,loggerActions,loggerExec)
 			+ "\r\n[Location]"+ path.parse(pathArchive).dir
 			+ "\r\n[StdyHash]"+ utils.getHashFromAntar(pathArchive,password,loggerActions,loggerExec)
-			+ "\r\n[ArchHash]"+ utils.getHashStudy(pathArchive,loggerExec)
-			+ "\r\n[VersionN]"+ utils.readVersionAntar(pathArchive,password,loggerActions,loggerExec)
+			+ "\r\n[ArchHash]";
+			if(computeHash){
+				metrics+= utils.getHashStudy(pathArchive,loggerExec);
+			}
+			else{
+				metrics+= "N.A.";
+				loggerExec.info("The signature was not set to be computed.");
+			}
+			metrics+=  "\r\n[VersionN]"+ utils.readVersionAntar(pathArchive,password,loggerActions,loggerExec)
 			+ "\r\n[LastSave]"+ utils.toJSONLocal(fs.statSync(pathArchive).mtime);		
 			for (var i=0; i<tabTag.length;i++){
 				if(i<9){
@@ -1539,8 +1592,15 @@ function addShowAblob(pathArchive){
 			+ "\r\n[ExtrName]"+ utils.getMetaFromAntar(pathArchive,"ExtrName",password,loggerActions,loggerExec)
 			+ "\r\n[Location]"+ path.parse(pathArchive).dir
 			+ "\r\n[StdyHash]"+ utils.getHashFromAntar(pathArchive,password,loggerActions,loggerExec)
-			+ "\r\n[ArchHash]"+ utils.getHashStudy(pathArchive,loggerExec)
-			+ "\r\n[LastSave]"+ utils.toJSONLocal(fs.statSync(pathArchive).mtime);	
+			+ "\r\n[ArchHash]";
+			if(computeHash){
+				metrics+= utils.getHashStudy(pathArchive,loggerExec);
+			}
+			else{
+				metrics+= "N.A.";
+				loggerExec.info("The signature was not set to be computed.");
+			}
+			metrics+=  "\r\n[LastSave]"+ utils.toJSONLocal(fs.statSync(pathArchive).mtime);	
 			metrics+="\r\n[II-Mtrcs]";
 			metrics+="\r\n[UnPackSz]"+ utils.getMetaFromAntar(pathArchive,"TotlSize",password,loggerActions,loggerExec);
 			metrics+="\r\n[UnPackFl]"+ utils.getMetaFromAntar(pathArchive,"TotlFile",password,loggerActions,loggerExec);
@@ -1814,64 +1874,17 @@ function recursiveSearch(pathFolder, level ){
 	var items=fs.readdirSync(pathFolder);
 	for (var i=0; i<items.length; i++) {
 		var subPath=path.join(pathFolder, items[i]);
-		var isdir=false;
-		try{
-			isdir=fs.statSync(subPath).isDirectory();
-		}
-		catch(err) {//do nothing
-		}
+		var isdir=fs.isDirectorySync(subPath);
 		
 		if(isdir){
 			try{
 				var studyPath=utils.isAntaresStudy(subPath);
-				var folderPath=utils.isAdoFolder(subPath);
+				var folderPath=utils.isChest(subPath);
 				if( studyPath){
-					var tabTag=utils.readTag(studyPath,loggerActions);
-					if(tabTag.length<3){
-						tabTag.push("");
-						tabTag.push("");
-						tabTag.push("");
-					}
-					var size;
-					if(displaySize)
-					{
-						size=getFolderSizeSync(studyPath);
-					}
-					else
-					{
-						size=0;
-					}
-					
-					jsonTabFolder.TypePath.push({	"type": "study",
-											"name": studyPath.match(/([^\\|\/]*)\/*$/)[1],
-											"path": studyPath,
-											"size": size,
-											"mdif": readModifDate(studyPath),
-											"tag1": tabTag[0],
-											"tag2": tabTag[1],
-											"tag3": tabTag[2]
-					});
+					AddStudyToJsonTabFolder(studyPath);
 				}
 				else if(folderPath){
-					var size;
-					if(displaySize)
-					{
-						size=getFolderSizeSync(folderPath);
-					}
-					else
-					{
-						size=0;
-					}
-
-					jsonTabFolder.TypePath.push({	"type": "chest",
-											"name": folderPath.match(/([^\\|\/]*)\/*$/)[1],
-											"path": folderPath,
-											"size": size,
-											"mdif": fs.statSync(folderPath).mtime,
-											"tag1": "",
-											"tag2": "",
-											"tag3": ""
-					});
+					AddChestToJsonTabFolder(folderPath);
 				}
 				else if (level >0){
 					recursiveSearch(subPath, level-1 );
@@ -1881,50 +1894,10 @@ function recursiveSearch(pathFolder, level ){
 			}
 		}
 		else if(utils.isArchive(subPath)){
-			var tabTag=utils.getTagsFromAntar(subPath,password,loggerActions,loggerExec);
-			if(tabTag.length<3){
-						tabTag.push("");
-						tabTag.push("");
-						tabTag.push("");
-			}
-			var size;
-			if(displaySize)
-			{
-				size=getFolderSizeSync(subPath);
-			}
-			else
-			{
-				size=0;
-			}
-			jsonTabFolder.TypePath.push({	"type": "archive",
-									"name": subPath.match(/([^\\|\/]*)\/*$/)[1],
-									"path": subPath,
-									"size": size,
-									"mdif": fs.statSync(subPath).mtime,
-									"tag1": tabTag[0],
-									"tag2": tabTag[1],
-									"tag3": tabTag[2]
-			});
+			AddArchiveToJsonTabFolder(subPath);
 		}
-		else if(utils.isAblob(subPath)){
-			var size;
-			if(displaySize)
-			{
-				size=getFolderSizeSync(subPath);
-			}
-			else
-			{
-				size=0;
-			}
-			jsonTabFolder.TypePath.push({	"type": "pack",
-									"name": subPath.match(/([^\\|\/]*)\/*$/)[1],
-									"path": subPath,
-									"size": size,
-									"mdif": fs.statSync(subPath).mtime,
-									"tag1": "",
-									"tag2": "",
-									"tag3": ""
-			});
+		else if(utils.isAntpack(subPath)){
+			AddPackToJsonTabFolder(subPath);
 		}
 	}
 }
@@ -2016,7 +1989,7 @@ function refreshBoxes(){
 			}
 		)();
 	}
-	if(typePath=="dir"){
+	if(typePath=="dir"|| typePath=="archive"|| typePath=="chest"|| typePath=="pack"|| typePath=="study"){
 		for(var i=0; i<jsonTabFolder.TypePath.length; i++){
 			addCheckArray(arrayCheck,[1,//show
 				((jsonTabFolder.TypePath[i].type=="archive" || jsonTabFolder.TypePath[i].type=="pack") && document.getElementById('tabs.03').shadowRoot.getElementById('destAcatCheck').checked)||((jsonTabFolder.TypePath[i].type=="study" || jsonTabFolder.TypePath[i].type=="chest") && document.getElementById('tabs.03').shadowRoot.getElementById('destScatCheck').checked),//register
@@ -2051,7 +2024,7 @@ function refreshBoxes(){
 	countAndDisplay();
 }
 
-// Displays the selected chest on the info line
+// Displays the selected porfolio on the info line
 function afficherFolder(sync){
 	jsonTabFolder = {TypePath:[]};
 	tagSelected="";
@@ -2068,6 +2041,95 @@ function afficherFolder(sync){
 			searchAndDisplayFolder();
 			}
 		,100);
+	}
+}
+
+
+// Displays the selected study on the info line
+function afficherStudy(sync){
+	jsonTabFolder = {TypePath:[]};
+	tagSelected="";
+	resetType();
+	var infoText=document.getElementById('tabs.03').shadowRoot.getElementById('infos');
+	infoText.textContent= "PLEASE WAIT (Displaying selected study)" ;
+	infoText.onclick="";
+	infoText.style.color="orange";
+	if (sync){
+		AddStudyToJsonTabFolder(pathMain);
+		displayJsonTabFolder();
+	}
+	else{
+		setTimeout(function () {
+				AddStudyToJsonTabFolder(pathMain);
+				displayJsonTabFolder();
+			}
+		,50);
+	}
+}
+
+// Displays the selected archive on the info line
+function afficherArchive(sync){
+	jsonTabFolder = {TypePath:[]};
+	tagSelected="";
+	resetType();
+	var infoText=document.getElementById('tabs.03').shadowRoot.getElementById('infos');
+	infoText.textContent= "PLEASE WAIT (Displaying selected archive)" ;
+	infoText.onclick="";
+	infoText.style.color="orange";
+	if (sync){
+		AddArchiveToJsonTabFolder(pathMain);
+		displayJsonTabFolder();
+	}
+	else{
+		setTimeout(function () {
+				AddArchiveToJsonTabFolder(pathMain);
+				displayJsonTabFolder();
+			}
+		,50);
+	}
+}
+
+// Displays the selected chest on the info line
+function afficherChest(sync){
+	jsonTabFolder = {TypePath:[]};
+	tagSelected="";
+	resetType();
+	var infoText=document.getElementById('tabs.03').shadowRoot.getElementById('infos');
+	infoText.textContent= "PLEASE WAIT (Displaying selected chest)" ;
+	infoText.onclick="";
+	infoText.style.color="orange";
+	if (sync){
+		AddChestToJsonTabFolder(pathMain);
+		displayJsonTabFolder();
+	}
+	else{
+		setTimeout(function () {
+				AddChestToJsonTabFolder(pathMain);
+				displayJsonTabFolder();
+			}
+		,50);
+	}
+}
+
+// Displays the selected pack on the info line
+function afficherPack(sync){
+	jsonTabFolder = {TypePath:[]};
+	tagSelected="";
+	resetType();
+	var infoText=document.getElementById('tabs.03').shadowRoot.getElementById('infos');
+	infoText.textContent= "PLEASE WAIT (Displaying selected pack)" ;
+	infoText.onclick="";
+	infoText.style.color="orange";
+	if (sync){
+		AddPackToJsonTabFolder(pathMain);
+		displayJsonTabFolder();
+	}
+	else{
+		setTimeout(function () {
+				AddPackToJsonTabFolder(pathMain);
+				displayJsonTabFolder();
+			}
+		,50);
 	}
 }
 
@@ -2089,50 +2151,11 @@ function afficherAcat(){
 		for(var i=0; i<JsonLib.libArray.length; i++){
 			if(fs.existsSync(JsonLib.libArray[i])){
 				if(utils.isArchive(JsonLib.libArray[i])){
-					var tabTag=utils.getTagsFromAntar(JsonLib.libArray[i],password,loggerActions,loggerExec);
-					if(tabTag.length<3){
-						tabTag.push("");
-						tabTag.push("");
-						tabTag.push("");
-					}
-					var size;
-					if(displaySize)
-					{
-						size=getFolderSizeSync(JsonLib.libArray[i]);
-					}
-					else
-					{
-						size=0;
-					}
-					jsonTabFolder.TypePath.push({	"type": "archive",
-									"name": JsonLib.libArray[i].match(/([^\\|\/]*)\/*$/)[1],
-									"path": JsonLib.libArray[i],
-									"size": size,
-									"mdif": fs.statSync(JsonLib.libArray[i]).mtime,
-									"tag1": tabTag[0],
-									"tag2": tabTag[1],
-									"tag3": tabTag[2]
-					});
+					AddArchiveToJsonTabFolder(JsonLib.libArray[i]);
 				}
-				else if(utils.isAblob(JsonLib.libArray[i])){
-					var size;
-					if(displaySize)
-					{
-						size=getFolderSizeSync(JsonLib.libArray[i]);
-					}
-					else
-					{
-						size=0;
-					}
-					jsonTabFolder.TypePath.push({	"type": "pack",
-									"name": JsonLib.libArray[i].match(/([^\\|\/]*)\/*$/)[1],
-									"path": JsonLib.libArray[i],
-									"size": size,
-									"mdif": fs.statSync(JsonLib.libArray[i]).mtime,
-									"tag1": "",
-									"tag2": "",
-									"tag3": ""
-					});
+				else if(utils.isAntpack(JsonLib.libArray[i])){
+					AddPackToJsonTabFolder(JsonLib.libArray[i]);
+					
 				}
 				else{
 					jsonTabFolder.TypePath.push({	"type": "NOK",
@@ -2187,31 +2210,9 @@ function afficherScat(){
 						JsonLib.libArray[i]=result;
 						fs.writeFileSync(pathMain, JSON.stringify(JsonLib) , 'utf-8');
 					}
-					var tabTag=utils.readTag(JsonLib.libArray[i],loggerActions);
-					if(tabTag.length<3){
-						tabTag.push("");
-						tabTag.push("");
-						tabTag.push("");
-					}
-					if(displaySize)
-					{
-						size=getFolderSizeSync(JsonLib.libArray[i]);
-					}
-					else
-					{
-						size=0;
-					}
-					jsonTabFolder.TypePath.push({	"type": "study",
-									"name": JsonLib.libArray[i].match(/([^\\|\/]*)\/*$/)[1],
-									"path": JsonLib.libArray[i],
-									"size": size,
-									"mdif": fs.statSync(JsonLib.libArray[i]).mtime,
-									"tag1": tabTag[0],
-									"tag2": tabTag[1],
-									"tag3": tabTag[2]
-					});
+					AddStudyToJsonTabFolder(JsonLib.libArray[i]);
 				}
-				else if(utils.isAdoFolder(JsonLib.libArray[i])){
+				else if(utils.isChest(JsonLib.libArray[i])){
 					if(displaySize)
 					{
 						size=getFolderSizeSync(JsonLib.libArray[i]);
@@ -2261,6 +2262,109 @@ function afficherScat(){
 	displayJsonTabFolder();
 }
 
+
+//Put a study into the jsonTabFolder
+function AddStudyToJsonTabFolder(pathStudy){
+	var tabTag=utils.readTag(pathStudy,loggerActions);
+	if(tabTag.length<3){
+		tabTag.push("");
+		tabTag.push("");
+		tabTag.push("");
+	}
+	var size;
+	if(displaySize)
+	{
+		size=getFolderSizeSync(pathStudy);
+	}
+	else
+	{
+		size=0;
+	}
+	
+	jsonTabFolder.TypePath.push({	"type": "study",
+							"name": pathStudy.match(/([^\\|\/]*)\/*$/)[1],
+							"path": pathStudy,
+							"size": size,
+							"mdif": readModifDate(pathStudy),
+							"tag1": tabTag[0],
+							"tag2": tabTag[1],
+							"tag3": tabTag[2]
+	});
+}
+
+//Put a study into the jsonTabFolder
+function AddArchiveToJsonTabFolder(pathArchive){
+	var tabTag=utils.getTagsFromAntar(pathArchive,password,loggerActions,loggerExec);
+	if(tabTag.length<3){
+				tabTag.push("");
+				tabTag.push("");
+				tabTag.push("");
+	}
+	var size;
+	if(displaySize)
+	{
+		size=getFolderSizeSync(pathArchive);
+	}
+	else
+	{
+		size=0;
+	}
+	jsonTabFolder.TypePath.push({	"type": "archive",
+							"name": pathArchive.match(/([^\\|\/]*)\/*$/)[1],
+							"path": pathArchive,
+							"size": size,
+							"mdif": fs.statSync(pathArchive).mtime,
+							"tag1": tabTag[0],
+							"tag2": tabTag[1],
+							"tag3": tabTag[2]
+	});
+}
+
+//Put a pack into the jsonTabFolder
+function AddPackToJsonTabFolder(pathPack){
+	var size;
+	if(displaySize)
+	{
+		size=getFolderSizeSync(pathPack);
+	}
+	else
+	{
+		size=0;
+	}
+	jsonTabFolder.TypePath.push({	"type": "pack",
+					"name": pathPack.match(/([^\\|\/]*)\/*$/)[1],
+					"path": pathPack,
+					"size": size,
+					"mdif": fs.statSync(pathPack).mtime,
+					"tag1": "",
+					"tag2": "",
+					"tag3": ""
+	});
+}
+
+//Put a chest into the jsonTabFolder
+function AddChestToJsonTabFolder(pathChest){
+	var size;
+	if(displaySize)
+	{
+		size=getFolderSizeSync(pathChest);
+	}
+	else
+	{
+		size=0;
+	}
+
+	jsonTabFolder.TypePath.push({	"type": "chest",
+							"name": pathChest.match(/([^\\|\/]*)\/*$/)[1],
+							"path": pathChest,
+							"size": size,
+							"mdif": fs.statSync(pathChest).mtime,
+							"tag1": "",
+							"tag2": "",
+							"tag3": ""
+	});
+}
+
 // Displays the selected path, sync is an optional variable that is only used in afficherFolder to tell him to be synchronous or not
 function afficher(sync) {
 	if(styleTagDefined==false && jsonTag && jsonTag.tags && jsonTag.tags.length>0){
@@ -2300,6 +2404,18 @@ function afficher(sync) {
 			else{
 				setTimeout(function () {afficherAcat()},50);
 			}
+		}
+		else if(typePath=="chest"){
+			afficherChest(sync);
+		}
+		else if(typePath=="archive"){
+			afficherArchive(sync);
+		}
+		else if(typePath=="study"){
+			afficherStudy(sync);
+		}
+		else if(typePath=="pack"){
+			afficherPack(sync);
 		}
 		else if(typePath=="dir"){
 			afficherFolder(sync);
@@ -2349,17 +2465,22 @@ function razTotalLine(){
 
 //Verify if the catalog provided is valid
 function isValidLib(pathLib){
-	var JsonLibTest;
-	try{
-		JsonLibTest = JSON.parse(fs.readFileSync(pathLib, 'utf8'));
+	if(path.extname(pathLib)==='.scat'||path.extname(pathLib)==='.acat'){
+		var JsonLibTest;
+		try{
+			JsonLibTest = JSON.parse(fs.readFileSync(pathLib, 'utf8'));
+		}
+		catch(err) {
+			loggerActions.debug("Error : " +err + " inside isValidLib");
+			loggerActions.info("Problem with the lib file");
+			return false;
+		}
+		if(JsonLibTest["libArray"]!="undefined" && JsonLibTest["libArray"] instanceof Array){
+			return true;
+		}
 	}
-	catch(err) {
-		loggerExec.debug("Error : " +err + " inside isValidLib");
-		loggerActions.info("Problem with the lib file");
+	else {
 		return false;
-	}
-	if(JsonLibTest["libArray"]!="undefined" && JsonLibTest["libArray"] instanceof Array){
-		return true;
 	}
 }
 
@@ -2372,19 +2493,22 @@ function getTypePath(){
 		else if(path.extname(pathMain)==='.acat'){
 			return 'acat';
 		}
-		else{
-			var isdir=false;
-			try{
-				isdir=fs.statSync(pathMain).isDirectory();
+		else if(path.extname(pathMain)==='.antar'){
+			return 'archive';
+		}
+		else if(path.extname(pathMain)==='.antpack'){
+			return 'pack';
+		}
+		else if(fs.isDirectorySync(pathMain)){
+			if(utils.isAntaresStudy(pathMain)){
+				return 'study';
+				
 			}
-			catch(err) {//do nothing
-			}
-			if(isdir)
-			{
-				return 'dir';
+			else if(utils.isChest(pathMain)){
+				return 'chest';
 			}
 			else{
-				return 0;
+				return 'dir';
 			}
 		}
 	}
@@ -2608,36 +2732,52 @@ function readModifDate(pathStudy){
 
 //Checks if the hash of the uncompressed study and the hash stored in the archive are the same
 function checkHashDest(archivePath,studyPath){
-	try{
-		var hashStudy=utils.getHashStudy(studyPath, loggerExec);
-		var hashFile=utils.getHashFromAntar(archivePath,password,loggerActions,loggerExec);
-		if(hashStudy!="error" && hashFile===hashStudy){
-			return "OK";
+	if(computeHash){
+		try{
+			var hashStudy=utils.getHashStudy(studyPath, loggerExec);
+			var hashFile=utils.getHashFromAntar(archivePath,password,loggerActions,loggerExec);
+			if(hashStudy!="error" && hashFile===hashStudy){
+				return "OK";
+			}
+			else if(hashFile=="N.A."){
+				loggerExec.info("The signature was not computed at the creation of " +archivePath + ".");
+				return "OK";
+			}
+			else {
+				loggerExec.debug("Hashstudy : "+ hashStudy + " hashFile : " + hashFile);
+				return "error";
+			}
 		}
-		else {
-			loggerExec.debug("Hashstudy : "+ hashStudy + " hashFile : " + hashFile);
+		catch(err){
+			loggerExec.debug(err + " inside checkHashDest");
 			return "error";
 		}
 	}
-	catch(err){
-		loggerExec.debug(err + " inside checkHashDest");
-		return "error";
+	else{
+		loggerExec.info("The signature was not set to be computed.");
+		return "OK";
 	}
 }
 
 //Checks if the hash of the uncompressed study and the hash stored in the archive are the same
 function checkCopyHash(copyPath,studyPath){
-	try{
-		var hashStudy=utils.getHashStudy(studyPath,loggerExec);
-		var hashCopy=utils.getHashStudy(copyPath,loggerExec);
-		if(hashStudy!="error" && hashStudy==hashCopy){
-			return "OK";
+	if(computeHash){
+		try{
+			var hashStudy=utils.getHashStudy(studyPath,loggerExec);
+			var hashCopy=utils.getHashStudy(copyPath,loggerExec);
+			if(hashStudy!="error" && hashStudy==hashCopy){
+				return "OK";
+			}
+			else return 0;
 		}
-		else return 0;
+		catch(err){
+			loggerExec.debug(err +" inside checkCopyHash");
+			return 0;
+		}
 	}
-	catch(err){
-		loggerExec.debug(err +" inside checkCopyHash");
-		return 0;
+	else{
+		loggerExec.info("The signature was not set to be computed.");
+		return "OK";
 	}
 }
 
@@ -2740,7 +2880,7 @@ style: `
 		top:0px;
 		margin-top:0px;
 		font-size: 1.17em;
-		left:240px;
+		left:190px;
 		width:500px;
 	}
 	h3.destSelect {
@@ -2942,33 +3082,33 @@ style: `
 		position : absolute;
 		bottom:5px;
 		height:7px;
-		left:100px;
+		left:70px;
 	}
 	#hours{
 		position : absolute;
 		bottom:5px;
 		height:20px;
-		left:140px;
+		left:110px;
 		width:20px;
 	}
 	#minutes{
 		position : absolute;
 		bottom:5px;
 		height:20px;
-		left:170px;
+		left:140px;
 		width:20px;
 	}
 	#texth{
 		position : absolute;
 		bottom:5px;
 		height:7px;
-		left:161px;
+		left:131px;
 	}
 	#textm{
 		position : absolute;
 		bottom:5px;
 		height:7px;
-		left:192px;
+		left:162px;
 	}
 	input[type="number"]::-webkit-outer-spin-button,
 	input[type="number"]::-webkit-inner-spin-button {
@@ -3042,7 +3182,7 @@ style: `
 	}
 	#rDepth{
 		position:relative;
-		top : -4px;
+		top : -4px;240px
 	}
 	input[type=range] {
 	  -webkit-appearance: none;
@@ -3150,6 +3290,16 @@ style: `
 		position:relative;
 		top:-2px;
 	}
+	#optionHash{
+		position:absolute;
+		right:5px;
+		top : 79px;
+		height: 1px;
+	}
+	#spanHash{
+		position:relative;
+		top:-2px;
+	}
 	`,
 
 template: `
@@ -3170,9 +3320,12 @@ template: `
 		<p>Research depth : 0 <input type="range" min="0" max="50" value="10" id="rDepth" onchange="Editor.Ipc.sendToPanel('tabs.03','changeDepth')"> 50</p>
 	</div>
 	<div id="optionSize">
-		<label onclick="Editor.Ipc.sendToPanel('tabs.03','dispSizeChanged')"><input type="checkbox" id="dispSize" checked><span id="spanSize">Display Size (when reloading/changing portfolio)</span></label>
+		<label title="Skip size assessment inside the item list" onclick="Editor.Ipc.sendToPanel('tabs.03','dispSizeChanged')"><input type="checkbox" id="dispSize" checked><span id="spanSize">Do not display object size</span></label>
 	</div>
-	<Div id="display"><h2>Origin <u onClick="Editor.Ipc.sendToPanel('tabs.03','openMainFolder')">portfolio</u> or <u onClick="Editor.Ipc.sendToPanel('tabs.03','openlib')">catalog</u> :</h2><p class="destDisp" id="destMainDisp">Undefined</p></Div>
+	<div id="optionHash">
+		<label title="Include hash in metadata and use it to spot errors" onclick="Editor.Ipc.sendToPanel('tabs.03','computeHashChanged')"><input type="checkbox" id="compHash" checked><span id="spanHash">Include hash (signature)</span></label>
+	</div>
+	<Div id="display"><h2>Origin <u onClick="Editor.Ipc.sendToPanel('tabs.03','openMainFolder')" title="portfolio, study or chest">folder</u> or <u onClick="Editor.Ipc.sendToPanel('tabs.03','openMainFile')" title="catalog, archive or pack">file</u> :</h2><p class="destDisp" id="destMainDisp">Undefined</p></Div>
 	<Div id="destFolder" title="Ticking or clicking on 'destination folder' opens a windows for folder selection. When ticked, the result of a compression, an expansion or a copy will go to the selected folder. When unticked, copy is impossible and the result of a compression or an expansion will go to the path of the archive or study on which the operation is done."><input type="checkbox" id="destFolderCheck" onClick="Editor.Ipc.sendToPanel('tabs.03','checkFolder')"><div  onClick="Editor.Ipc.sendToPanel('tabs.03','openFolder')" ><h3 class="destSelect">Destination folder :</h3><p class="destDisp" id="destFolderDisp">Unselected : each item will be archived or expanded in its own parent folder </p></Div></Div>
 	<Div id="destScat" title="Ticking or clicking on 'destination scat' opens a windows for file selection. When ticked, expanding an archive or copying a study will automatically register the resulting study in this catalog. It also unlocks the 'register' option for studies contained in the main catalog or portfolio."><input type="checkbox" id="destScatCheck" onClick="Editor.Ipc.sendToPanel('tabs.03','checkScat')"><div  onClick="Editor.Ipc.sendToPanel('tabs.03','openScat')"><h3 class="destSelect">Destination scat :</h3><p class="destDisp" id="destScatDisp">None</p></Div></Div>
 	<Div id="destAcat" title="Ticking or clicking on 'destination acat' opens a windows for file selection. When ticked, archiving a study or copying an archive will automatically register the resulting archive in this catalog. It also unlocks the 'register' option for archives contained in the main catalog or portfolio."><input type="checkbox" id="destAcatCheck" onClick="Editor.Ipc.sendToPanel('tabs.03','checkAcat')"><div  onClick="Editor.Ipc.sendToPanel('tabs.03','openAcat')"><h3 class="destSelect">Destination acat :</h3><p class="destDisp" id="destAcatDisp">None</p></Div></Div>
@@ -3230,7 +3383,7 @@ template: `
 		</ul>
 	</div>
 	<div id="bottomdiv">
-		<button type="button" id="buttonExec" class="exec" onClick="Editor.Ipc.sendToPanel('tabs.03','exec')">Execute</button> 
+		<button type="button" id="buttonExec" class="exec" onClick="Editor.Ipc.sendToPanel('tabs.03','exec')">Run</button> 
 		<!-- <input type="checkbox" id="checkDelay"> -->
 		<button type="button" id="buttonCancel" class="cancel" onClick="Editor.Ipc.sendToPanel('tabs.03','cancel')" style="pointer-events:all;">Cancel</button> 
 		<p id="delay">Delay :<\p>
@@ -3437,22 +3590,22 @@ messages: {
 				razTotalLine();
 			}
 		},
-		openlib(){
+		openMainFile(){
 			var getPath=dialog.showOpenDialog(electron.remote.getCurrentWindow(),{filters: [
-				{ name: 'All', extensions: ['scat','acat'] },
-				{ name: 'scat', extensions: ['scat'] },
-				{ name: 'acat', extensions: ['acat'] }
+				{ name: 'All', extensions: ['scat','acat','antar','antpack'] },
+				{ name: 'Catalogs', extensions: ['scat','acat'] },
+				{ name: 'Archives and packs', extensions: ['antar','antpack'] }
 				],
 			properties: [ 'openFile'] });
 			
 			if(getPath){
-				if(isValidLib(getPath[0])){
+				if(isValidLib(getPath[0])||utils.isArchive(getPath[0])||utils.isAntpack(getPath[0]) ){
 					pathMain=getPath[0];
 					afficher();
 					razTotalLine();
 				}
 				else { 
-					window.alert("This catalog is corrupted");
+					window.alert("This file is corrupted");
 				}
 			}
 		},
@@ -3516,7 +3669,7 @@ messages: {
 							window.alert("The main catalog is corrupted");
 						}
 					}
-					else if(typePath=="dir"){
+					else if(typePath=="dir"|| typePath=="archive"|| typePath=="chest"|| typePath=="pack"|| typePath=="study"){
 						disableMain();
 						waitExec(totMinutes,seconds,execFolder);
 					}
@@ -3713,17 +3866,24 @@ messages: {
 				pathIcon=path.join( app.getAppPath(),"..", "resources", "dataorganizer.ico");
 			}
 			var htmlContent="<img src=" + pathIcon + ' width="100" />';
-			htmlContent+= "<h2>Antares Data Organizer V2.0</h2>";
+			htmlContent+= "<h2>Antares Data Organizer V2.0.0</h2>";
 			htmlContent+= "<p>The purpose of the data organizer is, by providing a flexible environment dedicated to the organization of the application data, to help users to classify and keep track of the work completed on an everyday basis, while saving time and disk resources on the long run.</p>";
+			htmlContent+= "<p>Antares_Data_Organizer is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.</p>";
+			htmlContent+= "<p>Antares_Data_Organizer is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.</p>";
+			htmlContent+= "<p>You should have received a copy of the GNU General Public License along with Antares_Data_Organizer. If not, see http://www.gnu.org/licenses/.</p>";
 			swal
 			({
 				html: htmlContent,
 				text: "",
-				animation: false
+				animation: false,
+				width: '600px'
 			});
 		},
 		dispSizeChanged(){
-			displaySize=document.getElementById('tabs.03').shadowRoot.getElementById('dispSize').checked;
+			displaySize=!document.getElementById('tabs.03').shadowRoot.getElementById('dispSize').checked;
+		},
+		computeHashChanged(){
+			computeHash=document.getElementById('tabs.03').shadowRoot.getElementById('compHash').checked;
 		}
 	},
 });

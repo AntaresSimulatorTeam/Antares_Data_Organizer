@@ -3,6 +3,7 @@
   "version": "2.0.0",
   "main": "app.js",
   "license" : "GPL-3.0",
+  "description" : "The purpose of the data organizer is, by providing a flexible environment dedicated to the organization of the application data, to help users to classify and keep track of the work completed on an everyday basis, while saving time and disk resources on the long run.",
   "dependencies": {
     "arr-flatten": "^1.1.0",
     "binary-extensions": "^1.11.0",
@@ -20,8 +21,10 @@
     "regex-cache": "^0.4.4",
     "repeat-string": "^1.6.1",
     "wrap-ansi": "^3.0.1",
-    "md5-dir": "^3.0.1",
 	"coveralls": "^3.0.0",
 	"sweetalert2": "^7.28.12"
+  },
+  "scripts": {
+	"postinstall":"npm uninstall ctype"
   }
 }

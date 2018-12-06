@@ -71,7 +71,6 @@ if(args.length>1){
 			pathMain=path.parse(args[args.length-1]).dir;
 			setTimeout(function() {//let time for the app to start
 				display();
-				Editor.Panel.focus('tabs.02');
 			},100);
 		}
 	}
@@ -80,7 +79,6 @@ if(args.length>1){
 			pathMain=args[args.length-1];
 			setTimeout(function() {
 				display();
-				Editor.Panel.focus('tabs.02');
 			},100);
 		}
 	}
@@ -238,7 +236,7 @@ function display(){
 	}
 	//Setting the displays to visible or unvisible according to the type
 	if(path.extname(pathMain)===".antpack"){
-		document.getElementById('tabs.02').shadowRoot.getElementById('notes').style.top="310px";
+		document.getElementById('tabs.02').shadowRoot.getElementById('notes').style.top="335px";
 		document.getElementById('tabs.02').shadowRoot.getElementById('ArchName').innerHTML=path.parse(pathMain).base;
 		var studyMetrics=document.getElementById('tabs.02').shadowRoot.querySelectorAll('.studyMetrics');
 		for(var i=0;i<studyMetrics.length;i++){
@@ -287,7 +285,7 @@ function display(){
 			studyOrFolder[i].style.display="none";
 		}
 	}
-	else if(utils.isAdoFolder(pathMain)){
+	else if(utils.isChest(pathMain)){
 		document.getElementById('tabs.02').shadowRoot.getElementById('notes').style.top="215px";
 		document.getElementById('tabs.02').shadowRoot.getElementById('ExtName').innerHTML=path.parse(pathMain).base;
 		
@@ -385,6 +383,7 @@ function displayAll(){
 			document.getElementById('tabs.02').shadowRoot.getElementById('IntName').onclick=child_process.spawn(copyCmd).stdin.end(getName);
 		}
 		document.getElementById('tabs.02').shadowRoot.getElementById('saved').innerHTML=utils.toJSONLocal(fs.statSync(pathMain).mtime);
+		document.getElementById('tabs.02').shadowRoot.getElementById('StdHash').innerHTML=utils.getHashFromAntar(pathMain,password,loggerActions,0);
 		var closeCross = document.getElementById('tabs.02').shadowRoot.getElementById("TagList").getElementsByClassName("blackCross");
 		document.getElementById('tabs.02').shadowRoot.getElementById('compressedSize').innerHTML=common.formatBytes(fs.getSizeSync(pathMain),3);
 		document.getElementById('tabs.02').shadowRoot.getElementById('compressedFiles').innerHTML="1";
@@ -431,7 +430,7 @@ function displayAll(){
 		}
 		document.getElementById('tabs.02').shadowRoot.getElementById('version').innerHTML=utils.readVersionAntar(pathMain,password,loggerActions,0);
 	}
-	else if(utils.isAdoFolder(pathMain)){
+	else if(utils.isChest(pathMain)){
 		document.getElementById('tabs.02').shadowRoot.getElementById('ExtName').innerHTML=path.parse(pathMain).base;
 
 		document.getElementById('tabs.02').shadowRoot.getElementById('totalSize').innerHTML=getFolderSizeSync(pathMain);
@@ -705,7 +704,7 @@ Editor.Panel.extend({
 			<tr> <td class="leftColumn"> External Name : </td> <td id="ExtName"> - </td> </tr>
 			<tr class="studyOrArchive"> <td class="leftColumn"> Internal Name : </td> <td id="IntName"> - </td> </tr>
 			<tr> <td class="leftColumn"> Location : </td> <td id="location"> - </td></tr>
-			<tr class="archiveMetrics" style="display:none;"> <td class="leftColumn"> Original study hash : </td> <td id="StdHash"> - </td> </tr>
+			<tr class="archiveOrAblob" style="display:none;"> <td class="leftColumn"> Hash (expanded) : </td> <td id="StdHash"> - </td> </tr>
 			<tr class="studyOrArchive"> <td class="leftColumn"> Version : </td> <td id="version"> - </td></tr>
 			<tr> <td class="leftColumn"> Last Saved : </td> <td id="saved"> - </td></tr>
 			<tr class="studyOrArchive"> <td class="leftColumn"> Tags : </td> 
