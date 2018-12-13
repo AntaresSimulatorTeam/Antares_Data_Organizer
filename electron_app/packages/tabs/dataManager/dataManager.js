@@ -163,6 +163,8 @@ function loopExec (i,itabValidIndices, execFunc,twoDimsArray,tabValidIndices) {
 		var infoText=document.getElementById('tabs.03').shadowRoot.getElementById('infos');
 		infoText.textContent= "EXECUTION CANCELED : NOT ALL TASKS FINISHED";
 		infoText.style.color="firebrick";
+		swal({title :'Execution canceled', 'type':'info'});
+		
 	}
 	else if (ytabValidIndices< tabValidIndices.length) {   //  if the counter < imax, call the loop function
 		setTimeout(function () {    //  call a 0.1s setTimeout when the loop is called
@@ -183,6 +185,36 @@ function waitExec(minutes,seconds,execFunc){
 		infoText.onclick="";
 		infoText.textContent= "PLEASE WAIT " +(minutes+1) + " minutes before execution";//for 59min50s, displays 60 min, for 0min 10s displays 1 min
 		infoText.style.color="orange";
+		var hours=minutes/60;
+		var dispMinutes=minutes%60;
+		var dispTimeLeft;
+		if(hours>=1){
+			dispTimeLeft=hours + " hours, " + dispMinutes +" minutes, " + seconds +"seconds";
+		}
+		else if (minutes>=1){
+			dispTimeLeft= dispMinutes +" minutes, " + seconds +"seconds";
+		}
+		else{
+			dispTimeLeft= seconds +"seconds";
+		}
+		if(!swal.isVisible())
+		{
+			swal({
+			  html:'<h2>PLEASE WAIT</h2><p id="timeLeft">'+dispTimeLeft+' before execution.</p>',
+			  allowOutsideClick:  false,
+			  showCancelButton: true,
+			  closeOnCancel: true
+			}).then(() =>{
+				cancelAll=true;
+				swal({title :'Execution canceled', 'type':'info'});
+			});
+			swal.showLoading();
+			swal.enableButtons();
+		}
+		else{
+			var timeLeftP=document.getElementById('timeLeft');
+			timeLeftP.textContent=dispTimeLeft + " before execution";
+		}
 		if(seconds>0){
 			setTimeout(function() {waitExec(minutes,seconds-1,execFunc);},1000);
 		}
@@ -267,7 +299,12 @@ function execScat(){
 		infoText.textContent= "PLEASE WAIT (Processing : "+ jsonTabFolder.TypePath[tabValidIndices[0]].path + ")" ;
 		infoText.onclick="";
 		infoText.style.color="orange";
-	
+		swal({
+			  title: 'PLEASE WAIT',
+			  text: "Processing : "+ jsonTabFolder.TypePath[tabValidIndices[itabValidIndices+1]].path +")",
+			  allowOutsideClick:  false
+			})
+		swal.showLoading();
 		setTimeout(function () {
 			loopExec(tabValidIndices[0],0, internalExecScat,twoDimsArray,tabValidIndices);
 		}
@@ -277,6 +314,7 @@ function execScat(){
 		enableMain();
 		infoText.textContent= "No operations selected, execution finished." ;
 		infoText.style.color="lightgreen";
+		swal({title :'No operations selected, execution finished.', 'type':'info'});
 	}
 }
 
@@ -342,8 +380,14 @@ function execAcat(){
 		infoText.textContent= "PLEASE WAIT (Processing : "+ jsonTabFolder.TypePath[tabValidIndices[0]].path +")";
 		infoText.style.color="orange";
 		infoText.onclick="";
+		swal({
+			  title: 'PLEASE WAIT',
+			  text: "Processing : "+ jsonTabFolder.TypePath[tabValidIndices[itabValidIndices+1]].path +")",
+			  allowOutsideClick:  false
+			})
+		swal.showLoading();
 		setTimeout(function () {
-		loopExec(tabValidIndices[0],0, internalExecAcat,twoDimsArray,tabValidIndices);
+			loopExec(tabValidIndices[0],0, internalExecAcat,twoDimsArray,tabValidIndices);
 		}
 	,100);
 	}
@@ -351,6 +395,7 @@ function execAcat(){
 		enableMain();
 		infoText.textContent= "No operations selected, execution finished." ;
 		infoText.style.color="lightgreen";
+		swal({title :'No operations selected, execution finished.', 'type':'info'});
 	}
 }
 
@@ -420,6 +465,14 @@ function execFolder(){
 		infoText.textContent= "PLEASE WAIT (Processing : "+ jsonTabFolder.TypePath[tabValidIndices[0]].path +")";
 		infoText.onclick="";
 		infoText.style.color="orange";
+		
+		swal({
+			  title: 'PLEASE WAIT',
+			  text: "Processing : "+ jsonTabFolder.TypePath[tabValidIndices[0]].path +")",
+			  allowOutsideClick:  false
+			})
+		swal.showLoading();
+		
 		setTimeout(function () {
 		loopExec(tabValidIndices[0],0, internalExecFolder,twoDimsArray,tabValidIndices);
 		}
@@ -427,8 +480,13 @@ function execFolder(){
 	}
 	else{
 		enableMain();
+		swal({
+			text: "No operations selected, execution finished.",
+			type: "info",
+		});
 		infoText.textContent= "No operations selected, execution finished." ;
 		infoText.style.color="lightgreen";
+		swal({title :'No operations selected, execution finished.', 'type':'info'});
 	}
 }
 
@@ -494,6 +552,12 @@ function internalExecAcat(indice, itabValidIndices,twoDimsArray,tabValidIndices)
 		infoText.textContent= "PLEASE WAIT (Processing : "+ jsonTabFolder.TypePath[tabValidIndices[itabValidIndices+1]].path + ")" ;
 		infoText.onclick="";
 		infoText.style.color="orange";
+		swal({
+			  title: 'PLEASE WAIT',
+			  text: "Processing : "+ jsonTabFolder.TypePath[tabValidIndices[itabValidIndices+1]].path +")",
+			  allowOutsideClick:  false
+			})
+		swal.showLoading();
 	}
 	else{
 		if(unreg){
@@ -501,17 +565,55 @@ function internalExecAcat(indice, itabValidIndices,twoDimsArray,tabValidIndices)
 			unregister(arrayUnregister);
 		}
 		loggerExec.info("End of execution : "+ nbTasksOk + " tasks completed, " +nbTasks+ " tasks requested, "+ nbShadowTasks +" implicit tasks : " + nbErrorMain +" errors.\r\n\r\n");
-		loggerExec.close();
+		loggerExec.on('finish', function (){loggerExec.close();});
 		afficher("sync");
 		enableMain();
 		var infoText=document.getElementById('tabs.03').shadowRoot.getElementById('infos');
 		if(nbErrorMain){
 			infoText.textContent= "ALL TASKS FINISHED – SCHEDULED : " + nbTasks + ", COMPLETED : "+ nbTasksOk + " , ERRORS : " + nbErrorMain +". Please check the log at " + logExecPath;
 			infoText.style.color="firebrick";
+			var textAlert= "SCHEDULED : " + nbTasks + ", COMPLETED : "+ nbTasksOk + " , ERRORS : " + nbErrorMain +".";
+			swal({
+			  title: 'ALL TASKS FINISHED',
+			  text: textAlert,
+			  type: 'error',
+			  showCancelButton: true,
+			  cancelButtonText: 'Close',
+			  focusConfirm: true,
+			  focusCancel: false,
+			  allowOutsideClick:  false,
+			  confirmButtonText: 'Show log'
+			}).then((result) => {
+				  if (result.value) {
+					if(fs.existsSync(logExecPath)){
+						shell.openItem(logExecPath);
+					}
+				    else swal({title :'No log file found', 'type':'error'});
+				}
+			})
 		}
 		else{
 			infoText.textContent= "ALL TASKS FINISHED – SCHEDULED : " + nbTasks + ", COMPLETED : "+ nbTasksOk + " , ERRORS : 0. Please check the log at " + logExecPath;
 			infoText.style.color="lightgreen";
+			var textAlert= "SCHEDULED : " + nbTasks + ", COMPLETED : "+ nbTasksOk + " , ERRORS : 0.";
+			swal({
+			  title: 'ALL TASKS FINISHED',
+			  text: textAlert,
+			  type: 'success',
+			  showCancelButton: true,
+			  cancelButtonText: 'Close',
+			  focusConfirm: false,
+			  focusCancel: true,
+			  allowOutsideClick:  false,
+			  confirmButtonText: 'Show log'
+			}).then((result) => {
+				  if (result.value) {
+					if(fs.existsSync(logExecPath)){
+						shell.openItem(logExecPath);
+					}
+				    else swal({title :'No log file found', 'type':'error'});
+				}
+			})
 		}
 
 		infoText.onclick=(function(){
@@ -592,6 +694,20 @@ function internalExecScat(indice,itabValidIndices,twoDimsArray,tabValidIndices){
 		infoText.textContent= "PLEASE WAIT (Processing : "+ jsonTabFolder.TypePath[tabValidIndices[itabValidIndices+1]].path +")" ;
 		infoText.style.color="orange";
 		infoText.onclick="";
+		
+		swal({
+			  title: 'PLEASE WAIT',
+			  text: "Processing : "+ jsonTabFolder.TypePath[tabValidIndices[itabValidIndices+1]].path +")",
+			  allowOutsideClick:  false
+			})
+		swal.showLoading();
+		
+		swal({
+			  title: 'PLEASE WAIT',
+			  text: "Processing : "+ jsonTabFolder.TypePath[tabValidIndices[itabValidIndices+1]].path +")",
+			  allowOutsideClick:  false
+			})
+		swal.showLoading();
 	}
 	else{
 		if(unreg){
@@ -600,22 +716,60 @@ function internalExecScat(indice,itabValidIndices,twoDimsArray,tabValidIndices){
 		}
 		afficher("sync");
 		loggerExec.info("End of execution : "+ nbTasksOk + " tasks completed, " +nbTasks+ " tasks requested, "+ nbShadowTasks +" implicit tasks : " + nbErrorMain +" Errors.\r\n\r\n");
-		loggerExec.close();
+		loggerExec.on('finish', function (){loggerExec.close();});
 		enableMain();
 		var infoText=document.getElementById('tabs.03').shadowRoot.getElementById('infos');
 		if(nbErrorMain){
 			infoText.textContent= "ALL TASKS FINISHED – SCHEDULED : " + nbTasks + ", COMPLETED : "+ nbTasksOk + " , ERRORS : " + nbErrorMain +". Please check the log at " + logExecPath;
 			infoText.style.color="firebrick";
+			var textAlert= "SCHEDULED : " + nbTasks + ", COMPLETED : "+ nbTasksOk + " , ERRORS : " + nbErrorMain +".";
+			swal({
+			  title: 'ALL TASKS FINISHED',
+			  text: textAlert,
+			  type: 'error',
+			  showCancelButton: true,
+			  cancelButtonText: 'Close',
+			  focusConfirm: true,
+			  focusCancel: false,
+			  allowOutsideClick:  false,
+			  confirmButtonText: 'Show log'
+			}).then((result) => {
+				  if (result.value) {
+					if(fs.existsSync(logExecPath)){
+						shell.openItem(logExecPath);
+					}
+				    else swal({title :'No log file found', 'type':'error'});
+				}
+			})
 		}
 		else{
 			infoText.textContent= "ALL TASKS FINISHED – SCHEDULED : " + nbTasks + ", COMPLETED : "+ nbTasksOk + " , ERRORS : 0. Please check the log at " + logExecPath;
 			infoText.style.color="lightgreen";
+			var textAlert= "SCHEDULED : " + nbTasks + ", COMPLETED : "+ nbTasksOk + " , ERRORS : 0.";
+			swal({
+			  title: 'ALL TASKS FINISHED',
+			  text: textAlert,
+			  type: 'success',
+			  showCancelButton: true,
+			  cancelButtonText: 'Close',
+			  focusConfirm: false,
+			  focusCancel: true,
+			  allowOutsideClick:  false,
+			  confirmButtonText: 'Show log'
+			}).then((result) => {
+				  if (result.value) {
+					if(fs.existsSync(logExecPath)){
+						shell.openItem(logExecPath);
+					}
+				    else swal({title :'No log file found', 'type':'error'});
+				}
+			})
 		}
 		infoText.onclick=(function(){if(fs.existsSync(logExecPath)){
 				//exec("explorer.exe "+logExecPath);
 				shell.openItem(logExecPath);
 			}
-			else alert("No log file found");
+			else swal({title :'No log file found', 'type':'error'});
 		});
 		//Editor.log('nbTasks' + nbTasks);
 		//Editor.log('nbTasksOk' + nbTasksOk);
@@ -712,26 +866,71 @@ function internalExecFolder(indice,itabValidIndices,twoDimsArray,tabValidIndices
 		infoText.textContent= "PLEASE WAIT (Processing : "+ jsonTabFolder.TypePath[tabValidIndices[itabValidIndices+1]].path +")" ;
 		infoText.style.color="orange";
 		infoText.onclick="";
+		
+		swal({
+			  title: 'PLEASE WAIT',
+			  text: "Processing : "+ jsonTabFolder.TypePath[tabValidIndices[itabValidIndices+1]].path +")",
+			  allowOutsideClick:  false
+			})
+		swal.showLoading();
 	}
 	else{
 		afficher("sync");
 		loggerExec.info("End of execution : "+ nbTasksOk + " tasks completed, " +nbTasks+ " tasks requested, "+ nbShadowTasks +" implicit tasks : " + nbErrorMain +" Errors.\r\n\r\n");
-		loggerExec.close();
+		loggerExec.on('finish', function (){loggerExec.close();});
 		enableMain();
 		var infoText=document.getElementById('tabs.03').shadowRoot.getElementById('infos');
 		if(nbErrorMain){
 			infoText.textContent= "ALL TASKS FINISHED – SCHEDULED : " + nbTasks + ", COMPLETED : "+ nbTasksOk + " , ERRORS : " + nbErrorMain +". Please check the log at " + logExecPath;
 			infoText.style.color="firebrick";
+			var textAlert= "SCHEDULED : " + nbTasks + ", COMPLETED : "+ nbTasksOk + " , ERRORS : " + nbErrorMain +".";
+			swal({
+			  title: 'ALL TASKS FINISHED',
+			  text: textAlert,
+			  type: 'error',
+			  showCancelButton: true,
+			  cancelButtonText: 'Close',
+			  focusConfirm: true,
+			  focusCancel: false,
+			  allowOutsideClick:  false,
+			  confirmButtonText: 'Show log'
+			}).then((result) => {
+				  if (result.value) {
+					if(fs.existsSync(logExecPath)){
+						shell.openItem(logExecPath);
+					}
+				    else swal({title :'No log file found', 'type':'error'});
+				}
+			})
 		}
 		else{
 			infoText.textContent= "ALL TASKS FINISHED – SCHEDULED : " + nbTasks + ", COMPLETED : "+ nbTasksOk + " , ERRORS : 0.  Please check the log at " + logExecPath;
 			infoText.style.color="lightgreen";
+			var textAlert= "SCHEDULED : " + nbTasks + ", COMPLETED : "+ nbTasksOk + " , ERRORS : 0.";
+			swal({
+			  title: 'ALL TASKS FINISHED',
+			  text: textAlert,
+			  type: 'success',
+			  showCancelButton: true,
+			  cancelButtonText: 'Close',
+			  focusConfirm: false,
+			  focusCancel: true,
+			  allowOutsideClick:  false,
+			  confirmButtonText: 'Show log'
+			}).then((result) => {
+				  if (result.value) {
+					if(fs.existsSync(logExecPath)){
+						shell.openItem(logExecPath);
+					}
+				    else swal({title :'No log file found', 'type':'error'});
+				}
+			})
 		}
 		infoText.onclick=(function(){if(fs.existsSync(logExecPath)){
 				//exec("explorer.exe "+logExecPath);
 				shell.openItem(logExecPath);
 			}
-			else alert("No log file found");
+			else swal({title :'No log file found', 'type':'error'});
 		});
 	}
 }
@@ -1867,6 +2066,7 @@ function displayJsonTabFolder(){
 			tabSelected[i].classList.add("tagSelected");
 		}
 	}
+	swal.close();
 }
 
 // Recursive function for file system exploration which recognize antares studies and archives and registers them
@@ -2033,6 +2233,12 @@ function afficherFolder(sync){
 	infoText.textContent= "PLEASE WAIT (Searching portfolio for studies and archives)" ;
 	infoText.onclick="";
 	infoText.style.color="orange";
+	swal({
+			  title: 'PLEASE WAIT',
+			  text: "Searching portfolio for studies and archives",
+			  allowOutsideClick:  false
+	})
+	swal.showLoading();
 	if (sync){
 		searchAndDisplayFolder();
 	}
@@ -2054,10 +2260,17 @@ function afficherStudy(sync){
 	infoText.textContent= "PLEASE WAIT (Displaying selected study)" ;
 	infoText.onclick="";
 	infoText.style.color="orange";
+	swal({
+			  title: 'PLEASE WAIT',
+			  text: "Displaying selected study",
+			  allowOutsideClick:  false
+	})
+	swal.showLoading();
 	if (sync){
 		AddStudyToJsonTabFolder(pathMain);
 		displayJsonTabFolder();
 	}
+	
 	else{
 		setTimeout(function () {
 				AddStudyToJsonTabFolder(pathMain);
@@ -2076,6 +2289,12 @@ function afficherArchive(sync){
 	infoText.textContent= "PLEASE WAIT (Displaying selected archive)" ;
 	infoText.onclick="";
 	infoText.style.color="orange";
+	swal({
+			  title: 'PLEASE WAIT',
+			  text: "Displaying selected archive",
+			  allowOutsideClick:  false
+	})
+	swal.showLoading();
 	if (sync){
 		AddArchiveToJsonTabFolder(pathMain);
 		displayJsonTabFolder();
@@ -2098,6 +2317,12 @@ function afficherChest(sync){
 	infoText.textContent= "PLEASE WAIT (Displaying selected chest)" ;
 	infoText.onclick="";
 	infoText.style.color="orange";
+	swal({
+			  title: 'PLEASE WAIT',
+			  text: "Displaying selected chest",
+			  allowOutsideClick:  false
+	})
+	swal.showLoading();
 	if (sync){
 		AddChestToJsonTabFolder(pathMain);
 		displayJsonTabFolder();
@@ -2120,6 +2345,12 @@ function afficherPack(sync){
 	infoText.textContent= "PLEASE WAIT (Displaying selected pack)" ;
 	infoText.onclick="";
 	infoText.style.color="orange";
+	swal({
+			  title: 'PLEASE WAIT',
+			  text: "Displaying selected pack",
+			  allowOutsideClick:  false
+	})
+	swal.showLoading();
 	if (sync){
 		AddPackToJsonTabFolder(pathMain);
 		displayJsonTabFolder();
@@ -2386,6 +2617,12 @@ function afficher(sync) {
 			infoText.textContent= "PLEASE WAIT (Searching scat for studies)" ;
 			infoText.onclick="";
 			infoText.style.color="orange";
+			swal({
+			  title: 'PLEASE WAIT',
+			  text: "Searching scat for studies",
+			  allowOutsideClick:  false
+			})
+			swal.showLoading();
 			if(sync){
 				afficherScat();
 			}
@@ -2398,6 +2635,12 @@ function afficher(sync) {
 			infoText.textContent= "PLEASE WAIT (Searching acat for archives)" ;
 			infoText.onclick="";
 			infoText.style.color="orange";
+			swal({
+			  title: 'PLEASE WAIT',
+			  text: "Searching acat for archives",
+			  allowOutsideClick:  false
+			})
+			swal.showLoading();
 			if(sync){
 				afficherAcat();
 			}

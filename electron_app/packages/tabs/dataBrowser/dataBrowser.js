@@ -35,6 +35,7 @@ global.rootRequire = function(name) {
 }
 const common = rootRequire('src/common.js');
 const utils = rootRequire('src/utils.js');
+const swal = require('sweetalert2');
 var os;
 var copyCmd;
 if(process.platform=="win32"){
@@ -69,6 +70,12 @@ if(args.length>1){
 	if(args[args.length-2]=="-s"){
 		if(fs.existsSync(args[args.length-1])){
 			pathMain=path.parse(args[args.length-1]).dir;
+			swal({
+			  title: 'PLEASE WAIT',
+			  text: "Loading data about " + path.parse(args[args.length-1]).dir,
+			  allowOutsideClick:  false
+			})
+			swal.showLoading();
 			setTimeout(function() {//let time for the app to start
 				display();
 			},100);
@@ -77,6 +84,12 @@ if(args.length>1){
 	if(args[args.length-2]=="-a"){
 		if(fs.existsSync(args[args.length-1])){
 			pathMain=args[args.length-1];
+			swal({
+			  title: 'PLEASE WAIT',
+			  text: "Loading data about " + args[args.length-1],
+			  allowOutsideClick:  false
+			})
+			swal.showLoading();
 			setTimeout(function() {
 				display();
 			},100);
@@ -335,6 +348,12 @@ function display(){
 			studyOrFolder[i].style.display="";
 		}
 	}
+	swal({
+	  title: 'PLEASE WAIT',
+	  text: "Loading data about " + pathMain,
+	  allowOutsideClick:  false
+	})
+	swal.showLoading();
 	setTimeout(function () {displayAll()},100);//letting time to refresh
 }
 
@@ -489,6 +508,7 @@ function displayAll(){
 			}
 		}
 	}
+	swal.close();
 }
 
 //Reads date from study/sudy.antares and returns it a a string YYY-MM-DD or "Not found" if not found
