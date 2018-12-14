@@ -301,7 +301,7 @@ function execScat(){
 		infoText.style.color="orange";
 		swal({
 			  title: 'PLEASE WAIT',
-			  text: "Processing : "+ jsonTabFolder.TypePath[tabValidIndices[itabValidIndices+1]].path +")",
+			  text: "Processing : "+ jsonTabFolder.TypePath[tabValidIndices[itabValidIndices+1]].path,
 			  allowOutsideClick:  false
 			})
 		swal.showLoading();
@@ -314,7 +314,7 @@ function execScat(){
 		enableMain();
 		infoText.textContent= "No operations selected, execution finished." ;
 		infoText.style.color="lightgreen";
-		swal({title :'No operations selected, execution finished.', 'type':'info'});
+		swal({text :'No operations selected, execution finished.', 'type':'info'});
 	}
 }
 
@@ -382,7 +382,7 @@ function execAcat(){
 		infoText.onclick="";
 		swal({
 			  title: 'PLEASE WAIT',
-			  text: "Processing : "+ jsonTabFolder.TypePath[tabValidIndices[itabValidIndices+1]].path +")",
+			  text: "Processing : "+ jsonTabFolder.TypePath[tabValidIndices[itabValidIndices+1]].path ,
 			  allowOutsideClick:  false
 			})
 		swal.showLoading();
@@ -395,7 +395,7 @@ function execAcat(){
 		enableMain();
 		infoText.textContent= "No operations selected, execution finished." ;
 		infoText.style.color="lightgreen";
-		swal({title :'No operations selected, execution finished.', 'type':'info'});
+		swal({text :'No operations selected, execution finished.', 'type':'info'});
 	}
 }
 
@@ -468,7 +468,7 @@ function execFolder(){
 		
 		swal({
 			  title: 'PLEASE WAIT',
-			  text: "Processing : "+ jsonTabFolder.TypePath[tabValidIndices[0]].path +")",
+			  text: "Processing : "+ jsonTabFolder.TypePath[tabValidIndices[0]].path ,
 			  allowOutsideClick:  false
 			})
 		swal.showLoading();
@@ -486,7 +486,7 @@ function execFolder(){
 		});
 		infoText.textContent= "No operations selected, execution finished." ;
 		infoText.style.color="lightgreen";
-		swal({title :'No operations selected, execution finished.', 'type':'info'});
+		swal({text :'No operations selected, execution finished.', 'type':'info'});
 	}
 }
 
@@ -554,7 +554,7 @@ function internalExecAcat(indice, itabValidIndices,twoDimsArray,tabValidIndices)
 		infoText.style.color="orange";
 		swal({
 			  title: 'PLEASE WAIT',
-			  text: "Processing : "+ jsonTabFolder.TypePath[tabValidIndices[itabValidIndices+1]].path +")",
+			  text: "Processing : "+ jsonTabFolder.TypePath[tabValidIndices[itabValidIndices+1]].path ,
 			  allowOutsideClick:  false
 			})
 		swal.showLoading();
@@ -588,7 +588,7 @@ function internalExecAcat(indice, itabValidIndices,twoDimsArray,tabValidIndices)
 					if(fs.existsSync(logExecPath)){
 						shell.openItem(logExecPath);
 					}
-				    else swal({title :'No log file found', 'type':'error'});
+				    else swal({text :'No log file found', 'type':'error'});
 				}
 			})
 		}
@@ -620,7 +620,7 @@ function internalExecAcat(indice, itabValidIndices,twoDimsArray,tabValidIndices)
 			if(fs.existsSync(logExecPath)){
 				shell.openItem(logExecPath);
 			}
-			else alert("No log file found");
+			swal({text :'No log file found', 'type':'error'});
 		});
 	}
 }
@@ -697,14 +697,14 @@ function internalExecScat(indice,itabValidIndices,twoDimsArray,tabValidIndices){
 		
 		swal({
 			  title: 'PLEASE WAIT',
-			  text: "Processing : "+ jsonTabFolder.TypePath[tabValidIndices[itabValidIndices+1]].path +")",
+			  text: "Processing : "+ jsonTabFolder.TypePath[tabValidIndices[itabValidIndices+1]].path ,
 			  allowOutsideClick:  false
 			})
 		swal.showLoading();
 		
 		swal({
 			  title: 'PLEASE WAIT',
-			  text: "Processing : "+ jsonTabFolder.TypePath[tabValidIndices[itabValidIndices+1]].path +")",
+			  text: "Processing : "+ jsonTabFolder.TypePath[tabValidIndices[itabValidIndices+1]].path,
 			  allowOutsideClick:  false
 			})
 		swal.showLoading();
@@ -869,7 +869,7 @@ function internalExecFolder(indice,itabValidIndices,twoDimsArray,tabValidIndices
 		
 		swal({
 			  title: 'PLEASE WAIT',
-			  text: "Processing : "+ jsonTabFolder.TypePath[tabValidIndices[itabValidIndices+1]].path +")",
+			  text: "Processing : "+ jsonTabFolder.TypePath[tabValidIndices[itabValidIndices+1]].path,
 			  allowOutsideClick:  false
 			})
 		swal.showLoading();
@@ -1219,12 +1219,12 @@ function archiveStudy(pathStudy){
 		nbErrorMain++;
 		return 1;
 	}
+	var pathAntar=path.join(pathStudy,"*.antar");
+	var pathPack=path.join(pathStudy,"*.antpack");
 	if(destFolder!="" && document.getElementById('tabs.03').shadowRoot.getElementById('destFolderCheck').checked){
-		var cmd ='"'+os.getSevenZip(appPath, loggerActions)+'" a' + archiveOpt + '"' + archiveDest + '" "'+ pathStudy + '" -p' + password;
-	
+		var cmd ='"'+os.getSevenZip(appPath, loggerActions)+'" a' + archiveOpt + '"' + archiveDest + '" "'+ pathStudy + '" -mhe -p' + password;
 		try{
 			var ret=execSync(cmd);
-			
 			if(isArchiveOk(archiveDest)&& addFileToArchive(archiveDest,path.join(tmpDir,studyName+".meta")) && addFileToArchive(archiveDest,path.join(tmpDir,studyName+".para")) && addFileToArchive(archiveDest,path.join(tmpDir,studyName+".hash")) ){
 				if(destAcat!="" && document.getElementById('tabs.03').shadowRoot.getElementById('destAcatCheck').checked){
 					registerInLib(archiveDest, destAcat);
@@ -1255,7 +1255,6 @@ function archiveStudy(pathStudy){
 		var cmd = '"'+os.getSevenZip(appPath, loggerActions)+'" a'+ archiveOpt + '"'+archiveDest+'" "'+ pathStudy+'" -mhe -p' + password;
 		try{
 			var ret=execSync(cmd);
-			
 			if(isArchiveOk(archiveDest)&& addFileToArchive(archiveDest,path.join(tmpDir,studyName+".meta")) && addFileToArchive(archiveDest,path.join(tmpDir,studyName+".para")) && addFileToArchive(archiveDest,path.join(tmpDir,studyName+".hash")) ){
 				if(destAcat!="" && document.getElementById('tabs.03').shadowRoot.getElementById('destAcatCheck').checked){
 					registerInLib(archiveDest, destAcat);
@@ -1330,7 +1329,7 @@ function archiveFolder(pathStudy){
 		}
 		var metrics="[I-Identi]\n[ExtrName]"+  path.parse(pathStudy).base
 		+ "\n[Location]"+ path.parse(pathStudy).dir
-		+ "\n[LastSave]"+ readModifDate(pathStudy)
+		+ "\n[LastSave]"+ utils.toJSONLocal(fs.statSync(pathStudy).mtime)
 		+ "\n[OrigFLoc]"+ path.parse(pathStudy).dir;
 		if(path.parse(pathMain).ext==".scat"){
 			metrics+="\n[OrigSCat]"+pathMain;
@@ -1359,12 +1358,33 @@ function archiveFolder(pathStudy){
 		nbErrorMain++;
 		return 1;
 	}
+	var pathAntar=path.join(path.basename(pathStudy),"*.antar");
+	var pathPack=path.join(path.basename(pathStudy),"*.antpack");
 	if(destFolder!="" && document.getElementById('tabs.03').shadowRoot.getElementById('destFolderCheck').checked){
-		var cmd ='"'+os.getSevenZip(appPath, loggerActions)+'" a ' + archiveOpt + ' "'+archiveDest+'" "'+ pathStudy+'" -p' + password;
-	
+		//var cmd ='"'+os.getSevenZip(appPath, loggerActions)+'" a ' + archiveOpt + ' "'+archiveDest+'" "'+ pathStudy+'" -p' + password;
+		var cmd ='"'+os.getSevenZip(appPath, loggerActions)+'" a -r -mx=0 "' + archiveDest + '" -i!"'+ pathAntar + ' -i!"'+pathPack+'" -mhe -p' + password;
+		var cmd2='"'+os.getSevenZip(appPath, loggerActions)+'" a -r' + archiveOpt + '"' + archiveDest + '" "'+ pathStudy + '" -x!*.antar -x!*.antpack -p' + password;
 		try{
-			var ret=execSync(cmd);
-			
+			var ret=execSync(cmd,{
+			  cwd: path.dirname(pathStudy)
+			});
+			var line = ret.toString().match("Everything is Ok" );
+			if(!line){
+				fs.unlinkSync(archiveDest);
+				nbErrorMain++;
+				loggerExec.error(pathStudy + " has not been archived");
+				deleteTempFiles(studyName);
+				return 1;
+			}
+			var ret2=execSync(cmd2);
+			line = ret2.toString().match("Everything is Ok" );
+			if(!line){
+				fs.unlinkSync(archiveDest);
+				nbErrorMain++;
+				loggerExec.error(pathStudy + " has not been archived");
+				deleteTempFiles(studyName);
+				return 1;
+			}
 			if(isArchiveOk(archiveDest)&& addFileToArchive(archiveDest,path.join(tmpDir,studyName+".meta")) && addFileToArchive(archiveDest,path.join(tmpDir,studyName+".para")) && addFileToArchive(archiveDest,path.join(tmpDir,studyName+".hash")) ){
 				if(destAcat!="" && document.getElementById('tabs.03').shadowRoot.getElementById('destAcatCheck').checked){
 					registerInLib(archiveDest, destAcat);
@@ -1392,10 +1412,30 @@ function archiveFolder(pathStudy){
 		}
 	}
 	else{
-		var cmd = '"'+os.getSevenZip(appPath, loggerActions)+'" a ' + archiveOpt + ' "'+archiveDest+'" "'+ pathStudy+'" -mhe -p' + password;
+		//var cmd = '"'+os.getSevenZip(appPath, loggerActions)+'" a ' + archiveOpt + ' "'+archiveDest+'" "'+ pathStudy+'" -mhe -p' + password;
+		var cmd ='"'+os.getSevenZip(appPath, loggerActions)+'" a -r -mx=0 "' + archiveDest + '" -i!"'+ pathAntar + '" -i!"'+pathPack+'" -mhe -p' + password;
+		var cmd2='"'+os.getSevenZip(appPath, loggerActions)+'" a -r' + archiveOpt + '"' + archiveDest + '" "'+ pathStudy + '" -x!*.antar -x!*.antpack -p' + password;
 		try{
-			var ret=execSync(cmd);
-			
+			var ret=execSync(cmd,{
+			  cwd: path.dirname(pathStudy)
+			});
+			var line = ret.toString().match("Everything is Ok" );
+			if(!line){
+				fs.unlinkSync(archiveDest);
+				nbErrorMain++;
+				loggerExec.error(pathStudy + " has not been archived");
+				deleteTempFiles(studyName);
+				return 1;
+			}
+			var ret2=execSync(cmd2);
+			line = ret2.toString().match("Everything is Ok" );
+			if(!line){
+				fs.unlinkSync(archiveDest);
+				nbErrorMain++;
+				loggerExec.error(pathStudy + " has not been archived");
+				deleteTempFiles(studyName);
+				return 1;
+			}
 			if(isArchiveOk(archiveDest)&& addFileToArchive(archiveDest,path.join(tmpDir,studyName+".meta")) && addFileToArchive(archiveDest,path.join(tmpDir,studyName+".para")) && addFileToArchive(archiveDest,path.join(tmpDir,studyName+".hash")) ){
 				if(destAcat!="" && document.getElementById('tabs.03').shadowRoot.getElementById('destAcatCheck').checked){
 					registerInLib(archiveDest, destAcat);
@@ -2414,7 +2454,7 @@ function afficherAcat(){
 		}
 	}
 	else {
-		window.alert("Json file not correct");
+		swal({title :'Json file not correct', 'type':'error'});
 	}
 	displayJsonTabFolder();
 }
@@ -2488,7 +2528,7 @@ function afficherScat(){
 		}
 	}
 	else {
-		window.alert("Json file not correct");
+		swal({title :'Json file not correct', 'type':'error'});
 	}
 	displayJsonTabFolder();
 }
@@ -3755,7 +3795,7 @@ messages: {
 					razTotalLine();
 				}
 				else { 
-					window.alert("This catalog is corrupted");
+					swal({title :'This catalog is corrupted', 'type':'error'});
 				}
 			}
 		},
@@ -3772,7 +3812,7 @@ messages: {
 						refreshBoxes();
 					}
 					else { 
-						window.alert("This catalog is corrupted");
+						swal({title :'This catalog is corrupted', 'type':'error'});
 						document.getElementById('tabs.03').shadowRoot.getElementById('destScatCheck').checked=false;
 					}
 				}
@@ -3798,7 +3838,7 @@ messages: {
 					document.getElementById('tabs.03').shadowRoot.getElementById('destAcatCheck').checked=true;
 				}
 				else { 
-					window.alert("This catalog is corrupted");
+					swal({title :'This catalog is corrupted', 'type':'error'});
 				}
 				refreshBoxes();
 				razTotalLine();
@@ -3818,7 +3858,7 @@ messages: {
 						razTotalLine();
 					}
 					else { 
-						window.alert("This catalog is corrupted");
+						swal({title :'This catalog is corrupted', 'type':'error'});
 						document.getElementById('tabs.03').shadowRoot.getElementById('destAcatCheck').checked=false;
 					}
 				}
@@ -3848,7 +3888,7 @@ messages: {
 					razTotalLine();
 				}
 				else { 
-					window.alert("This file is corrupted");
+					swal({title :'This file is corrupted', 'type':'error'});
 				}
 			}
 		},
@@ -3865,14 +3905,13 @@ messages: {
 		exec(){
 			cancelAll=0;
 			if (destScat=="" && document.getElementById('tabs.03').shadowRoot.getElementById('destScatCheck').checked){
-				window.alert("Please select a destination study catalog or uncheck the option");
+				swal({text :'Please select a destination study catalog or uncheck the option', 'type':'error'});
 			}
 			else if(destAcat=="" && document.getElementById('tabs.03').shadowRoot.getElementById('destAcatCheck').checked){
-				window.alert("Please select a destination archive catalog or uncheck the option");
-			
+				swal({text :'Please select a destination archive catalog or uncheck the option', 'type':'error'});
 			}
 			else if(destFolder=="" && document.getElementById('tabs.03').shadowRoot.getElementById('destFolderCheck').checked){
-				window.alert("Please select a destination folder or uncheck the option");
+				swal({text :'Please select a destination folder or uncheck the option', 'type':'error'});
 			}
 			else{
 				if(pathMain){
@@ -3900,7 +3939,7 @@ messages: {
 							waitExec(totMinutes,seconds,execScat);
 						}
 						else { 
-							window.alert("The main catalog is corrupted");
+							swal({text :'The main catalog is corrupted', 'type':'error'});
 						}
 					}
 					else if(typePath=="acat"){
@@ -3909,7 +3948,7 @@ messages: {
 							waitExec(totMinutes,seconds,execAcat);
 						}
 						else { 
-							window.alert("The main catalog is corrupted");
+							swal({text :'The main catalog is corrupted', 'type':'error'});
 						}
 					}
 					else if(typePath=="dir"|| typePath=="archive"|| typePath=="chest"|| typePath=="pack"|| typePath=="study"){
@@ -4056,7 +4095,7 @@ messages: {
 				//exec("explorer.exe "+logExecPath);
 				shell.openItem(logExecPath);
 			}
-			else alert("No log for current session");
+			swal({text :'No log for current session', 'type':'error'});
 		},
 		refreshTag(){
 			for(var i=0; i<jsonTabFolder.TypePath.length; i++){
