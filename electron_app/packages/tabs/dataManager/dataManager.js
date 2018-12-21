@@ -4092,13 +4092,13 @@ messages: {
 		},
 		openAbout(){
 			var pathIcon;
-			if(fs.existsSync(path.join( app.getAppPath(), "..", "dataorganizer.ico")))
+			if(fs.existsSync(path.join( app.getAppPath(), "..", "dataorganizer.png")))
 			{
-				pathIcon=path.join( app.getAppPath(), "..", "dataorganizer.ico");
+				pathIcon=path.join( app.getAppPath(), "..", "dataorganizer.png");
 			}
-			else if(fs.existsSync(path.join( app.getAppPath(),"..", "resources", "dataorganizer.ico")))
+			else if(fs.existsSync(path.join( app.getAppPath(),"..", "resources", "dataorganizer.png")))
 			{
-				pathIcon=path.join( app.getAppPath(),"..", "resources", "dataorganizer.ico");
+				pathIcon=path.join( app.getAppPath(),"..", "resources", "dataorganizer.png");
 			}
 			var htmlContent="<img src=" + pathIcon + ' width="100" />';
 			htmlContent+= "<h2>Antares Data Organizer V2.0.0</h2>";

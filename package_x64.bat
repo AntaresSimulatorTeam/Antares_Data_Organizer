@@ -14,4 +14,7 @@ call xcopy .\resources\antar.ico .\AntaresDataOrganizer-win32-x64\resources\
 call xcopy .\resources\dataorganizer.ico .\AntaresDataOrganizer-win32-x64\resources\
 call xcopy .\resources\antpack.ico .\AntaresDataOrganizer-win32-x64\resources\
 call xcopy .\resources\ado.ico .\AntaresDataOrganizer-win32-x64\resources\
+call xcopy .\resources\settings.png .\AntaresDataOrganizer-win32-x64\resources\
+call xcopy .\resources\settingshover.png .\AntaresDataOrganizer-win32-x64\resources\
+call xcopy .\resources\dataorganizer.png .\AntaresDataOrganizer-win32-x64\resources\
 call PAUSE 

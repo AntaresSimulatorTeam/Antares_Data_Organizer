@@ -7,6 +7,9 @@ cp resources/dataorganizer.ico AntaresDataOrganizer-linux-x64/resources/dataorga
 cp resources/scat.ico AntaresDataOrganizer-linux-x64/resources/scat.png
 cp resources/antar.ico AntaresDataOrganizer-linux-x64/resources/antar.png
 cp resources/antpack.ico AntaresDataOrganizer-linux-x64/resources/antpack.png
+cp resources/settings.png AntaresDataOrganizer-linux-x64/resources/settings.png
+cp resources/settingshover.png AntaresDataOrganizer-linux-x64/resources/settingshover.png
+cp resources/dataorganizer.png AntaresDataOrganizer-linux-x64/resources/dataorganizer.png
 mkdir AntaresDataOrganizer
 mv AntaresDataOrganizer-linux-x64 AntaresDataOrganizer/AntaresDataOrganizer-linux-x64
 cd AntaresDataOrganizer
