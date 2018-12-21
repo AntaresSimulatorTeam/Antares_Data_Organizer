@@ -113,16 +113,16 @@ ${If} $0 > 0
 	WriteRegStr HKCR "AntaresDataOrgAntar\shell\open\command" "" '"${EXEPATH}" -a "%1"'
 	WriteRegStr HKCR "AntaresDataOrgAdo\shell\open\command" "" '"${EXEPATH}" -s "%1"'
 	WriteRegStr HKCR ".antar\DefaultIcon" "" "$INSTDIR\${DISTRIBFOLDERNAME}\resources\antar.ico"
-	WriteRegStr HKCR ".acat\DefaultIcon" "" "$INSTDIR\${DISTRIBFOLDERNAME}\resources\acat.ico"
+	WriteRegStr HKCR ".acat\DefaultIcon" "" "$INSTDIR\${DISTRIBFOLDERNAME}\resources\dataorganizer.ico"
 	WriteRegStr HKCR ".antpack\DefaultIcon" "" "$INSTDIR\${DISTRIBFOLDERNAME}\resources\antpack.ico"
 	WriteRegStr HKCR ".ado\DefaultIcon" "" "$INSTDIR\${DISTRIBFOLDERNAME}\resources\ado.ico"
-	WriteRegStr HKCR ".scat\DefaultIcon" "" "$INSTDIR\${DISTRIBFOLDERNAME}\resources\scat.ico"
+	WriteRegStr HKCR ".scat\DefaultIcon" "" "$INSTDIR\${DISTRIBFOLDERNAME}\resources\dataorganizer.ico"
 	WriteRegStr HKCR "Directory\Shell\ado" "" "Open into Antares Data Organizer"
 	WriteRegStr HKCR "Directory\Shell\ado\command" "" '"${EXEPATH}" -p "%1"'
 ${Else}
-	WriteRegStr HKCU "Software\classes\.scat\DefaultIcon" "" "$INSTDIR\${DISTRIBFOLDERNAME}\resources\scat.ico"
+	WriteRegStr HKCU "Software\classes\.scat\DefaultIcon" "" "$INSTDIR\${DISTRIBFOLDERNAME}\resources\dataorganizer.ico"
 	WriteRegStr HKCU "Software\classes\.antar\DefaultIcon" "" "$INSTDIR\${DISTRIBFOLDERNAME}\resources\antar.ico"
-	WriteRegStr HKCU "Software\classes\.acat\DefaultIcon" "" "$INSTDIR\${DISTRIBFOLDERNAME}\resources\acat.ico"
+	WriteRegStr HKCU "Software\classes\.acat\DefaultIcon" "" "$INSTDIR\${DISTRIBFOLDERNAME}\resources\dataorganizer.ico"
 	WriteRegStr HKCU "Software\classes\.antpack\DefaultIcon" "" "$INSTDIR\${DISTRIBFOLDERNAME}\resources\antpack.ico"
 	WriteRegStr HKCU "Software\classes\.ado\DefaultIcon" "" "$INSTDIR\${DISTRIBFOLDERNAME}\resources\ado.ico"
 	WriteRegStr HKCU "Software\classes\.scat" "" "AntaresDataOrgCat"

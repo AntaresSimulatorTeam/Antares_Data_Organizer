@@ -45,6 +45,9 @@ exports.getExt = function(filename){
 
 //Return a size in the proper unit and precision
 exports.formatBytes = function(bytes,precision) {
+   if(isNaN(bytes)){
+	   return "N.A.";
+   }
    if(bytes == 0) return '0 Byte';
    var k = 1024; 
    var sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
