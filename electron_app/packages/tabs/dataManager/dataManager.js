@@ -1423,7 +1423,7 @@ function archiveFolder(pathStudy){
 	if(destFolder!="" && document.getElementById('tabs.03').shadowRoot.getElementById('destFolderCheck').checked){
 		//var cmd ='"'+os.getSevenZip(appPath, loggerActions)+'" a ' + archiveOpt + ' "'+archiveDest+'" "'+ pathStudy+'" -p' + password;
 		var cmd ='"'+os.getSevenZip(appPath, loggerActions)+'" a -r -mx=0 "' + archiveDest + '" -i!"'+ pathAntar + ' -i!"'+pathPack+'" -mhe -p' + password;
-		var cmd2='"'+os.getSevenZip(appPath, loggerActions)+'" a -r' + archiveOpt + '"' + archiveDest + '" "'+ pathStudy + '" -x!*.antar -x!*.antpack -p' + password;
+		var cmd2='"'+os.getSevenZip(appPath, loggerActions)+'" a' + archiveOpt + '"' + archiveDest + '" "'+ pathStudy + '" -x!*.antar -x!*.antpack -p' + password;
 		try{
 			var ret=execSync(cmd,{
 			  cwd: path.dirname(pathStudy)
@@ -1474,7 +1474,7 @@ function archiveFolder(pathStudy){
 	else{
 		//var cmd = '"'+os.getSevenZip(appPath, loggerActions)+'" a ' + archiveOpt + ' "'+archiveDest+'" "'+ pathStudy+'" -mhe -p' + password;
 		var cmd ='"'+os.getSevenZip(appPath, loggerActions)+'" a -r -mx=0 "' + archiveDest + '" -i!"'+ pathAntar + '" -i!"'+pathPack+'" -mhe -p' + password;
-		var cmd2='"'+os.getSevenZip(appPath, loggerActions)+'" a -r' + archiveOpt + '"' + archiveDest + '" "'+ pathStudy + '" -x!*.antar -x!*.antpack -p' + password;
+		var cmd2='"'+os.getSevenZip(appPath, loggerActions)+'" a' + archiveOpt + '"' + archiveDest + '" "'+ pathStudy + '" -x!*.antar -x!*.antpack -p' + password;
 		try{
 			var ret=execSync(cmd,{
 			  cwd: path.dirname(pathStudy)
